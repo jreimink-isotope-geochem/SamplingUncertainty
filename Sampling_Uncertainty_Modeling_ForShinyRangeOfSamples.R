@@ -51,7 +51,7 @@ fte_theme_white <- function() {
     theme( plot.margin = unit( c( 0.35, 0.2, 0.3, 0.35 ), "cm" ) )
 }
 
-shiny.min.parameters <- read.csv("/Users/jessereimink/Google Drive (jxr1350@psu.edu)/Research/PSU/Projects/Treatise on Geochemistry Chapter/Modeling Uncertainties/Shiny_OutPut.csv", stringsAsFactors = FALSE)
+shiny.min.parameters <- read.csv("Shiny_OutPut.csv", stringsAsFactors = FALSE)
 
   
 #############################  DATA IMPORT #############################
@@ -234,6 +234,7 @@ summary.raw.sds <- data.frame( mass = sample.masses,
                                           t( wr.summary.table.20000.g$stdev ),
                                           t( wr.summary.table.40000.g$stdev ) ) )
 colnames(summary.raw.sds) <- c( "mass", rownames(wr.summary.table.625.g))
+summary.raw.sds <- data.frame(lapply(summary.raw.sds, function(x) round(x, digits = 2)))
 write.csv( summary.raw.sds, "Run.sds.csv", dec = 2 )
 
 summary.rsds <- data.frame( mass = sample.masses,
@@ -248,6 +249,20 @@ summary.rsds <- data.frame(lapply(summary.rsds, function(x) round(x, digits = 2)
 
 colnames(summary.rsds) <- c( "mass", rownames(wr.summary.table.625.g))
 write.csv( summary.rsds, "Run.rsds.csv", dec = 2 )
+
+
+summary.means <- data.frame( mass = sample.masses,
+                            means = rbind( t( wr.summary.table.625.g$means ),
+                                          t( wr.summary.table.1250.g$means ),
+                                          t( wr.summary.table.2500.g$means ),
+                                          t( wr.summary.table.5000.g$means ),
+                                          t( wr.summary.table.10000.g$means ),
+                                          t( wr.summary.table.20000.g$means ),
+                                          t( wr.summary.table.40000.g$means )) )
+summary.means <- data.frame(lapply(summary.means, function(x) round(x, digits = 2)))
+
+colnames(summary.means) <- c( "mass", rownames(wr.summary.table.625.g))
+write.csv( summary.means, "Run.means.csv", dec = 2 )
 
 
 ## summarize grain mass RSDS and grain number RSDs

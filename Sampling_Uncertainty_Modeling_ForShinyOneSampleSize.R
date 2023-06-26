@@ -243,7 +243,7 @@ means_long <- data.frame(
 )
 means_long$Group <- 1
 
-raw.sd.plot <-ggplot( means_long[ c(1:3,6:11), ], aes( x = Category, y = StDev, group = Group ) ) +
+raw.rsd.plot <-ggplot( means_long[ c(1:3,6:11), ], aes( x = Category, y = StDev, group = Group ) ) +
   fte_theme_white() +
   geom_line( color = "cadetblue3", linewidth = 2 ) +
   geom_point( color = "cadetblue4", size = 4 ) +

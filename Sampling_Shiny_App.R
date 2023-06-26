@@ -18,18 +18,19 @@ ui <- fluidPage(
       p(style = "text-align: center;", 
         HTML("This app was written by <br> 
              Drs. Jesse Reimink and Tom Chacko <br> 
-             and is largely based on calculations <br> 
-             by Stanley et al., 2003 <br>
-             with modifications that improved <br>
-             the accuracy of uncertainty estimates")),
+             and is largely based on the sampling error algorithms of <br> 
+             Stanley (2003) but also incorporate the effects of closure on <br>
+             uncertainty estimates associated with whole-rock compositions")),
       tags$hr(style = "border: 1px solid black; margin-top: 10px;"),
       h5("Instructions:"),
       p(HTML("<ol>
       <li>Enter data in the <b>Input Data</b> tab below</li>
       <li>Enter the sample name that will be saved to output tables and plots</li>
-      <li>Select the <b>Type of Calculation</b> below. <i>Range of Sample Sizes</i> models the rock over a range of sample sizes, 
-             while the <i>Defined Sample Size</i> uses a user-defined sample size</li>
-      <li>Press the <b>Save Table</b> button - this must be accomplished to yield accurate results</li>
+      <li>Select the <b>Type of Calculation</b> below. <i>Range of Sample Sizes</i> models 
+      the rock over a range of sample sizes (masses), 
+      while the <i>Defined Sample Size</i> uses a user-defined sample size</li>
+      <li>Press the <b>Save Table</b> button - this must be done for the program to run
+      the calculation for the desired rock composition</li>
       <li>Press <b>Run Modeling</b> and wait for program to finish</li>
       <li>View and download output files in the tabs in the output section</li>")),
     ),
@@ -44,7 +45,7 @@ ui <- fluidPage(
     #deactivate input sample size field when range of samples is selected
     conditionalPanel(
       condition = "input.calc_type == 'Single'",
-      numericInput( "sampleSize", "Sample Size:", value = 625, min = 1 )
+      numericInput( "sampleSize", "Sample Size (in grams):", value = 625, min = 1 )
     ),
     br(),
     # uiOutput("saveButton"),
@@ -62,12 +63,19 @@ ui <- fluidPage(
                br(),
                textInput( "sampleName", "Sample Name:", value = "sample name here" ),
                br(),
+               p("Dimensions in cm, densities in kg/cm3"),
                rHandsontableOutput("MineralParameters") ),
       
       # Tab 2: Output table - 
-      tabPanel("Results Table", dataTableOutput("output_table"),
+      tabPanel("Results Table", 
+               h4("Whole-rock Means"), dataTableOutput("output_means"),
+               downloadButton("dwnldMeanTablebtn", "Download Means Table" ),
                br(),
-               downloadButton("dwnldRSDbtn", "Download RSD Table" ) ),
+               h4("Whole-rock Relative Standard Deviations"), dataTableOutput("output_rsds"),
+               downloadButton("dwnldRSDbtn", "Download RSD Table" ),
+               br(),
+               h4("Whole-rock Standard Deviations"), dataTableOutput("output_sds"),
+               downloadButton("dwnldSDTablebtn", "Download StDev Table" ) ),
       
       
       # tabPanel("Oxide Plot", plotOutput("OxidePlotChangeable"),
@@ -79,17 +87,14 @@ ui <- fluidPage(
       #          ) ),
       
       #Tab 3: Output plot - Discordance Plot (lower and Upper int)
-      tabPanel("Modeled Oxide RSDs", plotOutput("FullModelPlot"),
+      tabPanel("Modeled Oxide RSDs", plotOutput("RSDsPlot"),
                br(),
                downloadButton( "dwnldFullModelplotbtn", "Download Plot" ) ),
       
       # Tab 4: Output plot - Discordance Plot (Lower Summed)
-      tabPanel("Relative Standard Deviations", plotOutput("RSDsPlot"),
+      tabPanel("Standard Deviations", plotOutput("SDsPlot"),
                br(),
                downloadButton("dwnldRSDplotbtn", "Download Plot" ) ),
-      
-      # Tab 5: Output plot - Heatmap 2D Histogram
-      tabPanel("Standard Deviations", plotOutput("SDsPlot"))
     )
   ),
   # CSS styling
@@ -230,32 +235,44 @@ server <- function(input, output) {
       # Load file for "Range of Samples" option
       # Source the different file or perform necessary operations
       rsds <- env$summary.rsds
-      wr.summary.table <- env$wr.summary.table
+      sds <- env$summary.raw.sds
+      summary.means <- env$summary.means
       wr.comp.model.comb <- env$wr.comp.model.comb
     }
     
-
     
-    
-    
+    output$RSDsPlot <- renderPlot({
+      env$raw.rsd.plot 
+    })   
     output$SDsPlot <- renderPlot({
       env$raw.sd.plot 
     })
     
-    output$RSDsPlot <- renderPlot({
-      env$raw.rsd.plot 
-    })
-    
-    output$FullModelPlot <- renderPlot({
-      env$mass.oxide.plot 
-    })
+
     
     # Render the data.table
-    output$output_table <- renderDataTable({
+    output$output_means <- renderDataTable({
       if (input$calc_type == "Single") {
         datatable(wr.summary.table)
       } else if (input$calc_type == "Range") {
+        datatable(summary.means)
+      }
+    })
+    
+    ## Render other tables if Range is selected
+    output$output_rsds <- renderDataTable({
+      if (input$calc_type == "Single") {
+        NULL
+      } else if (input$calc_type == "Range") {
         datatable(rsds)
+      }
+    })
+
+    output$output_sds <- renderDataTable({
+      if (input$calc_type == "Single") {
+        NULL
+      } else if (input$calc_type == "Range") {
+        datatable(sds)
       }
     })
     
@@ -286,16 +303,42 @@ server <- function(input, output) {
       }
     })
 
-    ## download data table
+    ## download data tables
+    output$dwnldMeanTablebtn <- downloadHandler(
+      filename = function() {
+        paste(input$sampleName,"Model_Means_", Sys.Date(), ".csv", sep = "")
+      },
+      content = function(file) {
+        if (input$calc_type == "Single") {
+          write.csv( wr.summary.table, file, row.names = TRUE )
+        } else if (input$calc_type == "Range") {
+          write.csv( summary.means, file, row.names = TRUE )
+        }
+      }
+    )
+    
     output$dwnldRSDbtn <- downloadHandler(
       filename = function() {
         paste(input$sampleName,"Model_RSDs_", Sys.Date(), ".csv", sep = "")
       },
       content = function(file) {
         if (input$calc_type == "Single") {
-          write.csv( wr.summary.table, file, row.names = TRUE )
-        } else if (input$calc_type == "Range") {
+          NULL
+        } else if ( input$calc_type == "Range") {
           write.csv( rsds, file, row.names = TRUE )
+        }
+      }
+    )
+    
+    output$dwnldSDTablebtn <- downloadHandler(
+      filename = function() {
+        paste(input$sampleName,"Model_SDs_", Sys.Date(), ".csv", sep = "")
+      },
+      content = function(file) {
+        if (input$calc_type == "Single") {
+          NULL
+        } else if ( input$calc_type == "Range") {
+          write.csv( sds, file, row.names = TRUE )
         }
       }
     )
