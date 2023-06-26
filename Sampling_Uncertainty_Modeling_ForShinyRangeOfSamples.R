@@ -234,7 +234,7 @@ summary.raw.sds <- data.frame( mass = sample.masses,
                                           t( wr.summary.table.20000.g$stdev ),
                                           t( wr.summary.table.40000.g$stdev ) ) )
 colnames(summary.raw.sds) <- c( "mass", rownames(wr.summary.table.625.g))
-write.csv( summary.raw.sds, "Run.sds.csv" )
+write.csv( summary.raw.sds, "Run.sds.csv", dec = 2 )
 
 summary.rsds <- data.frame( mass = sample.masses,
                             rsds = rbind( t( wr.summary.table.625.g$rsd ),
@@ -244,8 +244,10 @@ summary.rsds <- data.frame( mass = sample.masses,
                                           t( wr.summary.table.10000.g$rsd ),
                                           t( wr.summary.table.20000.g$rsd ),
                                           t( wr.summary.table.40000.g$rsd )) )
+summary.rsds <- data.frame(lapply(summary.rsds, function(x) round(x, digits = 2)))
+
 colnames(summary.rsds) <- c( "mass", rownames(wr.summary.table.625.g))
-write.csv( summary.rsds, "Run.rsds.csv" )
+write.csv( summary.rsds, "Run.rsds.csv", dec = 2 )
 
 
 ## summarize grain mass RSDS and grain number RSDs
@@ -278,7 +280,7 @@ summary.wr.comp.mean <- data.frame( mass = sample.masses,
                                                        t( wr.summary.table.20000.g$means ),
                                                        t( wr.summary.table.40000.g$means ) ) )
 colnames(summary.wr.comp.mean) <- c( "mass", rownames( wr.summary.table.10000.g ) )
-write.csv( summary.wr.comp.mean, "Run.mean.comps.csv" )
+write.csv( summary.wr.comp.mean, "Run.mean.comps.csv", dec = 2 )
 
 
 
@@ -296,20 +298,6 @@ raw.sd.plot <- summary.raw.sds[ , c(1:4,7:12,15)] %>%
         y = "SD on Oxide (wt%)") 
 
 
-## plotting compositions vs the mineral modes
-ggplot( model.rock.data, aes( x = Al2O3, y = FeO, color = bt ) ) +
-  geom_point(alpha = 0.2 ) +
-  fte_theme_white() +
-  scale_color_viridis()
-
-
-### plot raw SDs for the oxides
-summary.raw.sds[ , c(1,20)] %>% 
-  ggplot( aes( x = LiO2, y = mass / 1000 ) ) +
-  geom_line( linewidth = 1.5 ) +
-  fte_theme_white()+
-  labs( y = "Mass (kg)",
-        x = "SD on LiO2 (wt%)")
 
 
 ### plot  RSDs for the oxides
@@ -334,57 +322,6 @@ mass.oxide.plot <-  ggplot( data_long, aes( x = mass, y = value, color = oxide, 
   geom_line( linewidth = 1.5 ) +
   labs(x = "Mass", y = "Relative SD", color = "Variable") 
   # scale_color_viridis( discrete = T ) 
-
-summary.rsds[ , c(1:4,7:12)] %>% 
-  # select( colnames( summary.raw.sds[ , 1:10] ) ) %>%
-  ggplot( aes( x = mass, y = SiO2 ) ) +
-  geom_line( linewidth = 1.5 ) +
-  # ylim( 0, 10 ) +
-  fte_theme_white()+
-  theme( axis.text.x = element_text( size = 14 ),
-         axis.title.x = element_blank() ) +
-  labs( color = "Mass (g)",
-        y = "RSD on Oxide (%)")
-
-
-
-
-### plot  RSDs on the mineral masses
-summary.grain.mass.rsds[ ,c( 1:4,10:11) ] %>% 
-  gather( var, val , -mass, factor_key = TRUE ) %>% 
-  # select( colnames( summary.raw.sds[ , 1:10] ) ) %>%
-  ggplot( aes( x = var, y = val, color = as.factor( mass ), group = as.factor( mass ) ) ) +
-  geom_line( linewidth = 1.5 ) +
-  ylim(0, 15) +
-  fte_theme_white()+
-  theme( axis.text.x = element_text( size = 14 ),
-         axis.title.x = element_blank() ) +
-  labs( color = "Mass (g)",
-        y = "RSD on Mineral Mass")
-
-### plot  RSDs on the mineral grain number
-summary.grain.number.rsds[ ,c( 1:4,10:11) ] %>% 
-  gather( var, val , -mass, factor_key = TRUE ) %>% 
-  # select( colnames( summary.raw.sds[ , 1:10] ) ) %>%
-  ggplot( aes( x = var, y = val, color = as.factor( mass ), group = as.factor( mass ) ) ) +
-  geom_line( linewidth = 1.5 ) +
-  fte_theme_white()+
-  ylim(0, 15) +
-  theme( axis.text.x = element_text( size = 14 ),
-         axis.title.x = element_blank() ) +
-  labs( color = "Mass (g)",
-        y = "RSD on Mineral Grain Number")
-
-
-ggplot( wr.comp.model.comb.625.g, aes( x = SiO2 ) ) +
-  fte_theme_white()+
-  geom_density( fill = viridis(5)[1] ) +
-  geom_density( data = wr.comp.model.comb.1250.g, fill = viridis(5)[2] ) +
-  geom_density( data = wr.comp.model.comb.2500.g, fill = viridis(5)[3] ) +
-  geom_density( data = wr.comp.model.comb.5000.g, fill = viridis(5)[4] ) +
-  geom_density( data = wr.comp.model.comb.10000.g, fill = viridis(5)[5] ) 
-
-
 
 
 
