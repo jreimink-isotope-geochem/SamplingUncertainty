@@ -50,7 +50,6 @@ fte_theme_white <- function() {
     # Plot margins
     theme( plot.margin = unit( c( 0.35, 0.2, 0.3, 0.35 ), "cm" ) )
 }
-
 shiny.min.parameters <- read.csv("Shiny_OutPut.csv", stringsAsFactors = FALSE)
 
   
@@ -316,7 +315,7 @@ raw.sd.plot <- summary.raw.sds[ , c(1:4,7:12,15)] %>%
 
 
 ### plot  RSDs for the oxides
-raw.rsd.plot <- summary.rsds[ , c(1:4,7:12)] %>% 
+raw.rsd.plot <- summary.rsds[ , c(1:4,7:12,15)] %>% 
   gather( var, val , -mass, factor_key = TRUE ) %>% 
   # select( colnames( summary.raw.sds[ , 1:10] ) ) %>%
   ggplot( aes( x = var, y = val, color = as.factor( mass ), group = as.factor( mass ) ) ) +
@@ -329,7 +328,7 @@ raw.rsd.plot <- summary.rsds[ , c(1:4,7:12)] %>%
         y = "RSD on Oxide (%)")
 
 
-data_long <- reshape2::melt( summary.rsds[ , c(1:4,7:12)], id.vars = "mass", variable.name = "oxide", value.name = "value")
+data_long <- reshape2::melt( summary.rsds[ , c(1:4,7:12,15)], id.vars = "mass", variable.name = "oxide", value.name = "value")
 
 # Plot the data using ggplot2
 mass.oxide.plot <-  ggplot( data_long, aes( x = mass, y = value, color = oxide, group = oxide ) ) +
@@ -340,6 +339,42 @@ mass.oxide.plot <-  ggplot( data_long, aes( x = mass, y = value, color = oxide, 
 
 
 
+data_long_means <- reshape2::melt( summary.means[ , c(1:4,7:12,15)], id.vars = "mass", variable.name = "oxide", value.name = "mean" )
+data_long_stdev <- reshape2::melt( summary.raw.sds[ , c(1:4,7:12,15)], id.vars = "mass", variable.name = "oxide", value.name = "stdevs" )
+
+
+merged_df <- merge(data_long_means, data_long_stdev, by = c("mass", "oxide"))
+merged_df <- merged_df[order(merged_df$mass), ]
+oxide.order <-  colnames(summary.means[ , c(2:4,7:12,15)])
+merged_df$oxide <- factor(merged_df$oxide, levels = oxide.order)
+merged_df <- merged_df[order(merged_df$oxide), ]
+# merged_df$dodge <- rep(c(2,4,6,8,10,13), each = 4)
+
+# Plot a facet wrap function to show all the means and sds 
+plot_data <- ggplot(merged_df, aes( x = oxide, y = mean ) ) +
+  fte_theme_white() +
+  geom_point( aes( color = mass ), size = 4, position = position_dodge2(width = 1.5 ) ) +
+  geom_linerange(aes(color = mass, ymin = mean - stdevs, ymax = mean + stdevs),
+                 position = position_dodge2(width = 1.5)) +
+  viridis::scale_color_viridis() +
+  # geom_errorbar(aes( color = mass ), linewidth = 1,width=0, position = position_jitterdodge(dodge.width = 2, jitter.width = 2, seed = 1)) +
+  theme( axis.text.x = element_text( size = 14 ),
+         axis.text.y = element_text( size = 10 ),
+         axis.title.x = element_blank() ) +
+  coord_cartesian() +
+  labs( x = "Wt% Oxide", y = "Mean", color = "Mass (g)") +
+  # expand_limits(y = 1) +
+  facet_wrap(oxide ~ ., scales = "free" ) +
+  theme(aspect.ratio = 1)
+plot_data
+## create fake data to plot
+fake.plot.data <- with(merged_df,
+                       data.frame( mean=c(mean+stdevs+0.1,mean-stdevs-0.1),
+                                   stdevs=c(stdevs,stdevs),
+                                   oxide=c(oxide,oxide),
+                                   mass = c(mass, mass) ) ) 
+
+raw.sd.plot <- plot_data + geom_point(data=fake.plot.data,x=NA)
 
 
 

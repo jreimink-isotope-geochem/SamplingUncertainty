@@ -264,13 +264,15 @@ plot_data <- ggplot(means_long[ c(1:3,6:11), ], aes(x = Category, y = Mean, ymin
   coord_cartesian() +
   labs( x = "Category", y = "Mean" ) +
   # expand_limits(y = 1) +
-  facet_wrap(Category ~ ., scales = "free" )
+  facet_wrap(Category ~ ., scales = "free" ) +
+  theme(aspect.ratio = 1)
 
 ## create fake data to plot
 fake.plot.data <- with(means_long[ c(1:3,6:11), ],
            data.frame( Mean=c(Mean+StDev+0.25,Mean-StDev-0.25),
                        StDev=c(StDev,StDev),
                        Category=c(Category,Category)))
-raw.sd.plot <- plot_data+geom_point(data=fake.plot.data,x=NA)
+
+raw.sd.plot <- plot_data + geom_point(data=fake.plot.data,x=NA)
 
 

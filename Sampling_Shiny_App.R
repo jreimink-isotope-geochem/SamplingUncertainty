@@ -10,6 +10,7 @@ library(tidyr)
 
 # Define UI
 ui <- fluidPage(
+  
   titlePanel(""),
   sidebarPanel(
     tags$div(
@@ -89,12 +90,12 @@ ui <- fluidPage(
       #Tab 3: Output plot - Discordance Plot (lower and Upper int)
       tabPanel("Modeled Oxide RSDs", plotOutput("RSDsPlot"),
                br(),
-               downloadButton( "dwnldFullModelplotbtn", "Download Plot" ) ),
+               downloadButton( "dwnldRSDplotbtn", "Download Plot" ) ),
       
-      # Tab 4: Output plot - Discordance Plot (Lower Summed)
+      # Tab 4: Output plot - Download StDev plot
       tabPanel("Standard Deviations", plotOutput("SDsPlot"),
                br(),
-               downloadButton("dwnldRSDplotbtn", "Download Plot" ) ),
+               downloadButton("dwnlSDplotbtn", "Download Plot" ) ),
     )
   ),
   # CSS styling
@@ -245,7 +246,7 @@ server <- function(input, output) {
       env$raw.rsd.plot 
     })   
     output$SDsPlot <- renderPlot({
-      env$raw.sd.plot 
+      env$raw.sd.plot
     })
     
 
@@ -344,16 +345,16 @@ server <- function(input, output) {
     )
     
     ## download the mass vs RSD for each oxide plot
-    output$dwnldFullModelplotbtn <- downloadHandler(
+    output$dwnlSDplotbtn <- downloadHandler(
       filename = function() {
-        paste(input$sampleName,"Model_Results_", Sys.Date(), ".pdf", sep = "") # Set the filename for the downloaded file
+        paste(input$sampleName,"Model_SDs_", Sys.Date(), ".pdf", sep = "") # Set the filename for the downloaded file
       },
       content = function(file) {
         # Retrieve the saved plot and save it to the file
-        plot <- env$mass.oxide.plot
+        plot <- env$raw.sd.plot
         # Set the dimensions of the exported PDF
         width <- 14  # Specify the desired width in inches
-        height <- 8  # Specify the desired height in inches
+        height <- 14  # Specify the desired height in inches
         
         # Save the plot to the file as a PDF with the specified dimensions
         pdf(file, width = width, height = height)
@@ -365,11 +366,11 @@ server <- function(input, output) {
     
     output$dwnldRSDplotbtn <- downloadHandler(
       filename = function() {
-        paste(input$sampleName,"Model_RSDs_", Sys.Date(), ".csv", sep = "")
+        paste(input$sampleName,"Model_RSDs_", Sys.Date(), ".pdf", sep = "")
       },
       content = function(file) {
         # Retrieve the saved plot and save it to the file
-        plot <- env$raw.sd.plot
+        plot <- env$raw.rsd.plot
         # Set the dimensions of the exported PDF
         width <- 14  # Specify the desired width in inches
         height <- 8  # Specify the desired height in inches
@@ -380,10 +381,7 @@ server <- function(input, output) {
         dev.off()
       }
     )
-
-
   }
-  
   )
   
   observeEvent( input$column, {
