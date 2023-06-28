@@ -1,3 +1,5 @@
+
+
 fte_theme_white <- function() {
   
   library( RColorBrewer )
@@ -90,7 +92,7 @@ tot.num.min.grains <- num.min.grains/( modes/100 )
 err.num.min.grains.h <- sqrt(( 100-modes)/100*modes/100*tot.num.min.grains*
                                (N_n*tot.num.min.grains-tot.num.min.grains)/(N_n*tot.num.min.grains-1))
 err.num.min.grains.b <- sqrt(( 100-modes)/100*modes/100*tot.num.min.grains)
-err.num.min.grains.p <- sqrt(tot.num.min.grains)
+err.num.min.grains.p <- sqrt(num.min.grains)
 
 rsd.err.num.min.grains.h <- err.num.min.grains.h / num.min.grains * 100
 rsd.err.num.min.grains.b <- err.num.min.grains.b / num.min.grains * 100
@@ -163,6 +165,10 @@ minerals.comp.model <- list( SiO2 = sweep( mineral.model.normalized, 2, unlist( 
                              LiO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[19, ] ), `*` ),
                              ThO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[20, ] ), `*` )
 )
+
+minerals.comp.model$Th <- minerals.comp.model$ThO2 * 0.878809 * 10000
+minerals.comp.model$Zr <- minerals.comp.model$ZrO2 * 0.740318 * 10000
+minerals.comp.model$FeOt <- ( minerals.comp.model$Fe2O3 * 0.89981 ) + minerals.comp.model$FeO 
 # sum the rows in each list to get rock oxide compositions
 wr.comp.model <- lapply( minerals.comp.model, rowSums, na.rm = T )
 # unlist them into a dataframe
@@ -185,7 +191,7 @@ wr.summary.table <- data.frame( means = apply( wr.comp.model.comb, 2, mean ),
 
 wr.summary.table$rsd <- wr.summary.table$stdev / wr.summary.table$means * 100
 
-wr.summary.table <- data.frame(lapply(wr.summary.table, function(x) round(x, digits = 3)))
+wr.summary.table <- data.frame(lapply(wr.summary.table, function(x) round(x, digits = 4)))
 wr.summary.table <- t( wr.summary.table )
 colnames(wr.summary.table) <- colnames(wr.comp.model.comb)
 
@@ -253,26 +259,56 @@ raw.rsd.plot <-ggplot( means_long[ c(1:3,6:11), ], aes( x = Category, y = StDev,
 
 
 
-# Plot a facet wrap function to show all the means and sds 
-plot_data <- ggplot(means_long[ c(1:3,6:11), ], aes(x = Category, y = Mean, ymin = Mean - StDev, ymax = Mean + StDev)) +
+# Reshape the data frame to long format
+df_long <- tidyr::gather(wr.comp.model.comb, key = "oxide", value = "percent")
+oxide.order <-  colnames(summary.means[ , c("SiO2", "TiO2", "Al2O3", "FeOt", "MnO", "MgO", "CaO",
+                                            "Na2O", "K2O", "P2O5", "Zr", "Th")])
+df_long <- df_long[complete.cases(df_long), ]
+df_long$oxide <- factor( df_long$oxide, levels = oxide.order)
+df_long <- df_long[complete.cases(df_long), ]
+# df_long <- df_long[order(df_long$oxide), ]
+
+wr.comp.model.comb.summarize <- cbind( col.var = rep( 1, times = nrow( wr.comp.model.comb )),
+  wr.comp.model.comb )
+
+summary_stats <- wr.comp.model.comb.summarize %>%
+  summarise(across(everything(), list(mean = mean, sd = sd))) %>%
+  pivot_longer(cols = -1, names_to = c("oxide", ".value"), names_sep = "_")
+summary_stats <- summary_stats[-1,]
+
+summary_stats_plotting <- summary_stats %>%
+  filter(oxide %in% oxide.order) %>%
+  arrange(factor(oxide, levels = oxide.order))
+summary_stats_plotting <- summary_stats_plotting[order(summary_stats_plotting$oxide), ]
+
+
+summary_stats_plotting$oxide <- factor(summary_stats_plotting$oxide, levels = oxide.order)
+summary_stats_plotting <- summary_stats_plotting[order(summary_stats_plotting$oxide), ]
+
+# Plot facet_wrap with geom_density
+raw.sd.plot <- ggplot(df_long, aes(x = percent)) +
   fte_theme_white() +
-  geom_point( aes( color = Category ), size = 4 ) +
-  geom_errorbar(aes( color = Category ), width = 0.1) +
-  theme( axis.text.x = element_text( size = 14 ),
+  theme( axis.text.x = element_text( size = 10 ),
          axis.text.y = element_text( size = 10 ),
-         axis.title.x = element_blank() ) +
-  coord_cartesian() +
-  labs( x = "Category", y = "Mean" ) +
-  # expand_limits(y = 1) +
-  facet_wrap(Category ~ ., scales = "free" ) +
-  theme(aspect.ratio = 1)
+         axis.title.x = element_text( size = 20 ),
+         axis.title.y = element_text( size = 20 ),
+         strip.background = element_rect(
+           color="black", fill="#213e47", size=0.2, linetype="solid"
+         ),
+         strip.text.x = element_text(
+           size = 12, color = "white" ) ) +
+  geom_histogram( color = "black", fill = "#645153", size = 0.1) +
+  geom_vline(data = summary_stats_plotting, aes( xintercept = mean), linetype = "dashed", size = 1) +
+  geom_vline(data = summary_stats_plotting, aes(xintercept = mean + 2 * sd), linetype = "dotted", size = 0.5) +
+  geom_vline(data = summary_stats_plotting, aes(xintercept = mean - 2 * sd), linetype = "dotted", size = 0.5) +
+  labs( y = "", x = "Wt% Oxide/ppm") +
+  facet_wrap(~ oxide, ncol = 4, scales = "free", )
+raw.sd.plot
 
-## create fake data to plot
-fake.plot.data <- with(means_long[ c(1:3,6:11), ],
-           data.frame( Mean=c(Mean+StDev+0.25,Mean-StDev-0.25),
-                       StDev=c(StDev,StDev),
-                       Category=c(Category,Category)))
 
-raw.sd.plot <- plot_data + geom_point(data=fake.plot.data,x=NA)
 
+
+
+
+wr.summary.table <- wr.summary.table[ , c( 1:6,23,7:11,13:14,16:19,21:22 ) ]
 
