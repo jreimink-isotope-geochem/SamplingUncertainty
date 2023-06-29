@@ -4,6 +4,7 @@
 ############################# CLEAR THE ENVIRONMENT, RUN EVERY TIME! #############################
 # rm( list = ls( ) )
 
+setwd("/Users/jessereimink/Google Drive (jxr1350@psu.edu)/Research/PSU/Projects/Treatise on Geochemistry Chapter/Modeling Uncertainties/Shiny App/")
 
 
 fte_theme_white <- function() {
@@ -376,7 +377,7 @@ plot_data <- ggplot(merged_df, aes( x = mass, y = mean ) ) +
   fte_theme_white() +
   geom_point( color = "#645153", size = 4, position = position_dodge2(width = 1.5 ) ) +
   geom_linerange(aes(ymin = mean - stdevs, ymax = mean + stdevs),
-                 position = position_dodge2(width = 1.5), color = "#645153" ) +
+                 position = position_dodge2(width = 1.5), color = "#645153", size = 1.5 ) +
   # viridis::scale_color_viridis() +
   # geom_errorbar(aes( color = mass ), linewidth = 1,width=0, position = position_jitterdodge(dodge.width = 2, jitter.width = 2, seed = 1)) +
   theme( axis.text.x = element_text( size = 10 ),

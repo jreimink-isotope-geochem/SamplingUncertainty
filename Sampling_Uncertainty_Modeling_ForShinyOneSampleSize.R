@@ -297,17 +297,14 @@ raw.sd.plot <- ggplot(df_long, aes(x = percent)) +
          ),
          strip.text.x = element_text(
            size = 12, color = "white" ) ) +
-  geom_histogram( color = "black", fill = "#645153", size = 0.1) +
-  geom_vline(data = summary_stats_plotting, aes( xintercept = mean), linetype = "dashed", size = 1) +
-  geom_vline(data = summary_stats_plotting, aes(xintercept = mean + 2 * sd), linetype = "dotted", size = 0.5) +
-  geom_vline(data = summary_stats_plotting, aes(xintercept = mean - 2 * sd), linetype = "dotted", size = 0.5) +
+  geom_histogram( color = "black", fill = "#645153", size = 0.1, bins = 30 ) +
+  geom_vline(data = summary_stats_plotting, aes( xintercept = mean), color = "#3A8997", linetype = "dashed", size = 1) +
+  geom_vline(data = summary_stats_plotting, aes(xintercept = mean + 2 * sd), color = "#8f7767", linetype = "dotted", size = 1) +
+  geom_vline(data = summary_stats_plotting, aes(xintercept = mean - 2 * sd), color = "#8f7767", linetype = "dotted", size = 1) +
   labs( y = "", x = "Wt% Oxide/ppm") +
+  theme(aspect.ratio = 1) +
   facet_wrap(~ oxide, ncol = 4, scales = "free", )
 raw.sd.plot
-
-
-
-
 
 
 wr.summary.table <- wr.summary.table[ , c( 1:6,23,7:11,13:14,16:19,21:22 ) ]
