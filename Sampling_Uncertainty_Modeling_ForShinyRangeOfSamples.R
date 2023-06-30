@@ -2,9 +2,6 @@
 
 
 ############################# CLEAR THE ENVIRONMENT, RUN EVERY TIME! #############################
-# rm( list = ls( ) )
-
-setwd("/Users/jessereimink/Google Drive (jxr1350@psu.edu)/Research/PSU/Projects/Treatise on Geochemistry Chapter/Modeling Uncertainties/Shiny App/")
 
 
 fte_theme_white <- function() {
@@ -268,6 +265,15 @@ colnames(summary.means) <- c( "mass", rownames(wr.summary.table.625.g))
 write.csv( summary.means, "Run.means.csv")
 
 
+wr.summary.table.export <- rbind( summary.means[ 1, ], summary.raw.sds[1,], summary.rsds[1, ],
+                                  summary.means[ 2, ], summary.raw.sds[2,], summary.rsds[2, ],
+                                  summary.means[ 3, ], summary.raw.sds[3,], summary.rsds[3, ],
+                                  summary.means[ 4, ], summary.raw.sds[4,], summary.rsds[4, ],
+                                  summary.means[ 5, ], summary.raw.sds[5,], summary.rsds[5, ],
+                                  summary.means[ 6, ], summary.raw.sds[6,], summary.rsds[6, ] )
+wr.summary.table.export$value <- rep( c("Mean", "StDev", "RSD" ), times = 6 )
+wr.summary.table.export <- wr.summary.table.export[, c(ncol(wr.summary.table.export), 1:(ncol(wr.summary.table.export)-1))]
+
 ## summarize grain mass RSDS and grain number RSDs
 summary.grain.mass.rsds <- data.frame( mass = sample.masses,
                                        rsds = rbind( t( grain.mass.summary.625.g$rsd ),
@@ -300,23 +306,18 @@ write.csv( summary.wr.comp.mean, "Run.mean.comps.csv" )
 
 
 
-### plot raw SDs for the oxides
-raw.sd.plot <- summary.raw.sds[ , c(1:4,7:12,15)] %>% 
-  gather( var, val , -mass, factor_key = TRUE ) %>% 
-  # select( colnames( summary.raw.sds[ , 1:10] ) ) %>%
-  ggplot( aes( x = var, y = val, color = as.factor( mass ), group = as.factor( mass ) ) ) +
-  geom_line( linewidth = 1.5 ) +
-  fte_theme_white()+
-  theme( axis.text.x = element_text( size = 10 ),
-         axis.title.x = element_blank() ) +
-  labs( color = "Mass (g)",
-        y = "SD on Oxide (wt%)") 
+### define the order of the oxides for plotting and exporting 
+oxide.order.rsdplot <-  colnames(summary.wr.comp.mean[ , c("SiO2", "TiO2", "Al2O3", "FeOt", "MnO", "MgO", "CaO",
+                                                       "Na2O", "K2O", "P2O5")])
 
 
+
+
+summary.rsds.test <- summary.rsds[, c("mass", oxide.order.rsdplot ) ]
 
 
 ### plot  RSDs for the oxides
-raw.rsd.plot <- summary.rsds[ , c(1:4,7:12)] %>% 
+raw.rsd.plot <- summary.rsds.test %>% 
   gather( var, val , -mass, factor_key = TRUE ) %>% 
   # select( colnames( summary.raw.sds[ , 1:10] ) ) %>%
   ggplot( aes( x = var, y = val, color = as.factor( mass ), group = as.factor( mass ) ) ) +
@@ -373,11 +374,11 @@ merged_df <- merged_df[order(merged_df$oxide), ]
 # merged_df$dodge <- rep(c(2,4,6,8,10,13), each = 4)
 
 
-plot_data <- ggplot(merged_df, aes( x = mass, y = mean ) ) +
+raw.sd.plot <- ggplot(merged_df, aes( x = mass, y = mean ) ) +
   fte_theme_white() +
   geom_point( color = "#645153", size = 4, position = position_dodge2(width = 1.5 ) ) +
   geom_linerange(aes(ymin = mean - stdevs, ymax = mean + stdevs),
-                 position = position_dodge2(width = 1.5), color = "#645153", size = 1.5 ) +
+                 position = position_dodge2(width = 1.5), color = "#645153", size = 0.6 ) +
   # viridis::scale_color_viridis() +
   # geom_errorbar(aes( color = mass ), linewidth = 1,width=0, position = position_jitterdodge(dodge.width = 2, jitter.width = 2, seed = 1)) +
   theme( axis.text.x = element_text( size = 10 ),
@@ -395,19 +396,19 @@ plot_data <- ggplot(merged_df, aes( x = mass, y = mean ) ) +
   facet_wrap(oxide ~ ., scales = "free" ) +
   theme(aspect.ratio = 1)
 
-
-
-
-plot_data
-## create fake data to plot
-fake.plot.data <- with(merged_df,
-                       data.frame( mean=c(mean+stdevs+0.05,mean-stdevs-0.05),
-                                   stdevs=c(stdevs,stdevs),
-                                   oxide=c(oxide,oxide),
-                                   mass = c(mass, mass) ) ) 
-
-raw.sd.plot <- plot_data + geom_point(data=fake.plot.data,x=NA)
 raw.sd.plot
+
+
+# plot_data
+## create fake data to plot
+# fake.plot.data <- with(merged_df,
+#                        data.frame( mean=c(mean+stdevs+0.05,mean-stdevs-0.05),
+#                                    stdevs=c(stdevs,stdevs),
+#                                    oxide=c(oxide,oxide),
+#                                    mass = c(mass, mass) ) ) 
+# 
+# raw.sd.plot <- plot_data + geom_point(data=fake.plot.data,x=NA)
+# raw.sd.plot
 
 
 

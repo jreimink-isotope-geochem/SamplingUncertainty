@@ -249,7 +249,19 @@ means_long <- data.frame(
 )
 means_long$Group <- 1
 
-raw.rsd.plot <-ggplot( means_long[ c(1:3,6:11), ], aes( x = Category, y = StDev, group = Group ) ) +
+
+
+### define the order of the oxides for plotting and exporting 
+oxide.order.rsdplot <-  colnames(wr.summary.table[ , c("SiO2", "TiO2", "Al2O3", "FeOt", "MnO", "MgO", "CaO",
+                                               "Na2O", "K2O", "P2O5")])
+
+
+means_long$Category <- factor( means_long$Category, levels = oxide.order.rsdplot)
+means_long <- means_long[complete.cases(means_long), ]
+means_long <- means_long[order(means_long$Category), ]
+
+
+raw.rsd.plot <-ggplot( means_long, aes( x = Category, y = StDev, group = Group ) ) +
   fte_theme_white() +
   geom_line( color = "cadetblue3", linewidth = 2 ) +
   geom_point( color = "cadetblue4", size = 4 ) +
@@ -259,10 +271,13 @@ raw.rsd.plot <-ggplot( means_long[ c(1:3,6:11), ], aes( x = Category, y = StDev,
 
 
 
+oxide.order <-  colnames(wr.summary.table[ , c("SiO2", "TiO2", "Al2O3", "FeOt", "MnO", "MgO", "CaO",
+                                               "Na2O", "K2O", "P2O5", "Zr", "Th")])
+
+
 # Reshape the data frame to long format
 df_long <- tidyr::gather(wr.comp.model.comb, key = "oxide", value = "percent")
-oxide.order <-  colnames(summary.means[ , c("SiO2", "TiO2", "Al2O3", "FeOt", "MnO", "MgO", "CaO",
-                                            "Na2O", "K2O", "P2O5", "Zr", "Th")])
+
 df_long <- df_long[complete.cases(df_long), ]
 df_long$oxide <- factor( df_long$oxide, levels = oxide.order)
 df_long <- df_long[complete.cases(df_long), ]
