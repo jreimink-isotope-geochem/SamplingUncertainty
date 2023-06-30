@@ -163,16 +163,19 @@ minerals.comp.model <- list( SiO2 = sweep( mineral.model.normalized, 2, unlist( 
                              CO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[17, ] ), `*` ),
                              SO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[18, ] ), `*` ),
                              LiO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[19, ] ), `*` ),
-                             ThO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[20, ] ), `*` )
+                             ThO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[20, ] ), `*` ),
+                             BaO = sweep( mineral.model.normalized, 2, unlist( min.comps[21, ] ), `*` )
 )
 
 minerals.comp.model$Th <- minerals.comp.model$ThO2 * 0.878809 * 10000
 minerals.comp.model$Zr <- minerals.comp.model$ZrO2 * 0.740318 * 10000
+minerals.comp.model$Ba <- minerals.comp.model$BaO * 0.895651 * 10000
 minerals.comp.model$FeOt <- ( minerals.comp.model$Fe2O3 * 0.89981 ) + minerals.comp.model$FeO 
 # sum the rows in each list to get rock oxide compositions
 wr.comp.model <- lapply( minerals.comp.model, rowSums, na.rm = T )
 # unlist them into a dataframe
 wr.comp.model.comb <- bind_rows( wr.comp.model )
+
 
 ## summarize the grain numbers
 grain.number.summary <- data.frame( means = apply( grain.num.model, 2, mean ),
@@ -194,6 +197,7 @@ wr.summary.table$rsd <- wr.summary.table$stdev / wr.summary.table$means * 100
 wr.summary.table <- data.frame(lapply(wr.summary.table, function(x) round(x, digits = 4)))
 wr.summary.table <- t( wr.summary.table )
 colnames(wr.summary.table) <- colnames(wr.comp.model.comb)
+
 
 ## cbind into a large single data frame
 model.rock.data <- cbind( mineral.model.normalized, wr.comp.model.comb )
@@ -268,13 +272,13 @@ raw.rsd.plot <-ggplot( means_long, aes( x = Category, y = StDev, group = Group )
   theme( axis.text.x = element_text( size = 14 ),
          axis.title.x = element_blank() ) +
   labs(  y = "RSD on Oxide (%)")
-
+# raw.rsd.plot
 
 
 oxide.order <-  colnames(wr.summary.table[ , c("SiO2", "TiO2", "Al2O3", "FeOt", "MnO", "MgO", "CaO",
-                                               "Na2O", "K2O", "P2O5", "Zr", "Th")])
+                                               "Na2O", "K2O", "P2O5", "Zr", "Th", "Ba" )])
 
-
+wr.summary.table.export <- wr.summary.table[,oxide.order]
 # Reshape the data frame to long format
 df_long <- tidyr::gather(wr.comp.model.comb, key = "oxide", value = "percent")
 
@@ -322,5 +326,5 @@ raw.sd.plot <- ggplot(df_long, aes(x = percent)) +
 raw.sd.plot
 
 
-wr.summary.table <- wr.summary.table[ , c( 1:6,23,7:11,13:14,16:19,21:22 ) ]
+
 

@@ -70,13 +70,13 @@ ui <- fluidPage(
       # Tab 2: Output table - 
       tabPanel("Results Table", 
                h4("Whole-rock Means"), dataTableOutput("output_means"),
-               downloadButton("dwnldMeanTablebtn", "Download Means Table" ),
-               br(),
-               h4("Whole-rock Relative Standard Deviations"), dataTableOutput("output_rsds"),
-               downloadButton("dwnldRSDbtn", "Download RSD Table" ),
-               br(),
-               h4("Whole-rock Standard Deviations"), dataTableOutput("output_sds"),
-               downloadButton("dwnldSDTablebtn", "Download StDev Table" ) ),
+               downloadButton("dwnldMeanTablebtn", "Download Means Table" ) ),
+               # br(),
+               # h4("Whole-rock Relative Standard Deviations"), dataTableOutput("output_rsds"),
+               # downloadButton("dwnldRSDbtn", "Download RSD Table" ),
+               # br(),
+               # h4("Whole-rock Standard Deviations"), dataTableOutput("output_sds"),
+               # downloadButton("dwnldSDTablebtn", "Download StDev Table" ) ),
       
       
       # tabPanel("Oxide Plot", plotOutput("OxidePlotChangeable"),
@@ -127,7 +127,7 @@ ui <- fluidPage(
 server <- function(input, output) {
   
   # Read the data from CSV
-  min_parameters <- reactiveVal(read.csv("min_parameters.csv", stringsAsFactors = FALSE))
+  min_parameters <- reactiveVal(read.csv("min_parameters_input.csv", stringsAsFactors = FALSE))
   ## oxide to plot
   data.oxide <- reactiveVal(NULL)
   
@@ -229,7 +229,7 @@ server <- function(input, output) {
     # Retrieve the result from the environment
     if (input$calc_type == "Single") {
 
-      wr.summary.table <- env$wr.summary.table
+      wr.summary.table <- env$wr.summary.table.export
       wr.comp.model.comb <- env$wr.comp.model.comb
       
     } else if (input$calc_type == "Range") {
@@ -237,7 +237,7 @@ server <- function(input, output) {
       # Source the different file or perform necessary operations
       rsds <- env$summary.rsds
       sds <- env$summary.raw.sds
-      summary.means <- env$summary.means
+      summary.means <- env$wr.summary.table.export
       wr.comp.model.comb <- env$wr.comp.model.comb
     }
     
@@ -256,26 +256,26 @@ server <- function(input, output) {
       if (input$calc_type == "Single") {
         datatable(wr.summary.table)
       } else if (input$calc_type == "Range") {
-        datatable(summary.means)
+        datatable(wr.summary.table.export, options = list(pageLength = 30, info = FALSE))
       }
     })
-    
-    ## Render other tables if Range is selected
-    output$output_rsds <- renderDataTable({
-      if (input$calc_type == "Single") {
-        NULL
-      } else if (input$calc_type == "Range") {
-        datatable(rsds)
-      }
-    })
-
-    output$output_sds <- renderDataTable({
-      if (input$calc_type == "Single") {
-        NULL
-      } else if (input$calc_type == "Range") {
-        datatable(sds)
-      }
-    })
+    # 
+    # ## Render other tables if Range is selected
+    # output$output_rsds <- renderDataTable({
+    #   if (input$calc_type == "Single") {
+    #     NULL
+    #   } else if (input$calc_type == "Range") {
+    #     datatable(rsds)
+    #   }
+    # })
+    # 
+    # output$output_sds <- renderDataTable({
+    #   if (input$calc_type == "Single") {
+    #     NULL
+    #   } else if (input$calc_type == "Range") {
+    #     datatable(sds)
+    #   }
+    # })
     
     observeEvent( input$runModelBtn, {
       showModal(
@@ -289,20 +289,20 @@ server <- function(input, output) {
         )
       )
     })
-
     
-    # Render the data.table
-    output$myTable <- renderDataTable({
-      
-      if (input$calc_type == "Single") {
-        datatable( wr.summary.table )
-        
-      } else if (input$calc_type == "Range") {
-        # Load file for "Range of Samples" option
-        # Source the different file or perform necessary operations
-        datatable( rsds )
-      }
-    })
+    
+    # # Render the data.table
+    # output$myTable <- renderDataTable({
+    #   
+    #   if (input$calc_type == "Single") {
+    #     datatable( wr.summary.table )
+    #     
+    #   } else if (input$calc_type == "Range") {
+    #     # Load file for "Range of Samples" option
+    #     # Source the different file or perform necessary operations
+    #     datatable( wr.summary.table.export )
+    #   }
+    # })
 
     ## download data tables
     output$dwnldMeanTablebtn <- downloadHandler(

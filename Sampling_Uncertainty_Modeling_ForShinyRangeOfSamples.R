@@ -1,7 +1,4 @@
-# Modeling U-Pb data for resolvability of U-Pb discordance modeling ages
 
-
-############################# CLEAR THE ENVIRONMENT, RUN EVERY TIME! #############################
 
 
 fte_theme_white <- function() {
@@ -169,11 +166,13 @@ for( j in 1:length(sample.masses)) {
                                CO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[17, ] ), `*` ),
                                SO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[18, ] ), `*` ),
                                LiO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[19, ] ), `*` ),
-                               ThO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[20, ] ), `*` )
+                               ThO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[20, ] ), `*` ),
+                               BaO = sweep( mineral.model.normalized, 2, unlist( min.comps[21, ] ), `*` )
   )
   
   minerals.comp.model$Th <- minerals.comp.model$ThO2 * 0.878809 * 10000
   minerals.comp.model$Zr <- minerals.comp.model$ZrO2 * 0.740318 * 10000
+  minerals.comp.model$Ba <- minerals.comp.model$BaO * 0.895651 * 10000
   minerals.comp.model$FeOt <- ( minerals.comp.model$Fe2O3 * 0.89981 ) + minerals.comp.model$FeO 
   # sum the rows in each list to get rock oxide compositions
   wr.comp.model <- lapply( minerals.comp.model, rowSums, na.rm = T )
@@ -265,14 +264,6 @@ colnames(summary.means) <- c( "mass", rownames(wr.summary.table.625.g))
 write.csv( summary.means, "Run.means.csv")
 
 
-wr.summary.table.export <- rbind( summary.means[ 1, ], summary.raw.sds[1,], summary.rsds[1, ],
-                                  summary.means[ 2, ], summary.raw.sds[2,], summary.rsds[2, ],
-                                  summary.means[ 3, ], summary.raw.sds[3,], summary.rsds[3, ],
-                                  summary.means[ 4, ], summary.raw.sds[4,], summary.rsds[4, ],
-                                  summary.means[ 5, ], summary.raw.sds[5,], summary.rsds[5, ],
-                                  summary.means[ 6, ], summary.raw.sds[6,], summary.rsds[6, ] )
-wr.summary.table.export$value <- rep( c("Mean", "StDev", "RSD" ), times = 6 )
-wr.summary.table.export <- wr.summary.table.export[, c(ncol(wr.summary.table.export), 1:(ncol(wr.summary.table.export)-1))]
 
 ## summarize grain mass RSDS and grain number RSDs
 summary.grain.mass.rsds <- data.frame( mass = sample.masses,
@@ -360,18 +351,31 @@ ggplot( model.rock.data.625.g, aes( x= ThO2 ) ) +
 
 
 data_long_means <- reshape2::melt( summary.means[ , c("mass", "SiO2", "TiO2", "Al2O3", "FeOt", "MnO", "MgO", "CaO",
-                                                      "Na2O", "K2O", "P2O5", "Zr", "Th")], id.vars = "mass", variable.name = "oxide", value.name = "mean" )
+                                                      "Na2O", "K2O", "P2O5", "Zr", "Th", "Ba")], id.vars = "mass", variable.name = "oxide", value.name = "mean" )
 data_long_stdev <- reshape2::melt( summary.raw.sds[ , c("mass", "SiO2", "TiO2", "Al2O3", "FeOt", "MnO", "MgO", "CaO",
-                                                        "Na2O", "K2O", "P2O5", "Zr", "Th")], id.vars = "mass", variable.name = "oxide", value.name = "stdevs" )
+                                                        "Na2O", "K2O", "P2O5", "Zr", "Th", "Ba")], id.vars = "mass", variable.name = "oxide", value.name = "stdevs" )
 
 
 merged_df <- merge(data_long_means, data_long_stdev, by = c("mass", "oxide"))
 merged_df <- merged_df[order(merged_df$mass), ]
 oxide.order <-  colnames(summary.means[ , c("SiO2", "TiO2", "Al2O3", "FeOt", "MnO", "MgO", "CaO",
-                                            "Na2O", "K2O", "P2O5", "Zr", "Th")])
+                                            "Na2O", "K2O", "P2O5", "Zr", "Th", "Ba")])
 merged_df$oxide <- factor(merged_df$oxide, levels = oxide.order)
 merged_df <- merged_df[order(merged_df$oxide), ]
 # merged_df$dodge <- rep(c(2,4,6,8,10,13), each = 4)
+
+
+## table for exporting final data
+wr.summary.table.export <- NULL
+for( i in 1:length(sample.masses) ) {
+  wr.summary.table.export <- rbind( wr.summary.table.export, 
+                                    summary.means[ i, ], summary.raw.sds[i,], summary.rsds[i, ] )
+  
+}
+wr.summary.table.export <- wr.summary.table.export[, c("mass", oxide.order)]
+wr.summary.table.export$value <- rep( c("Mean", "StDev", "RSD" ), times = length(sample.masses) )
+wr.summary.table.export <- wr.summary.table.export[, c(ncol(wr.summary.table.export), 1:(ncol(wr.summary.table.export)-1))]
+
 
 
 raw.sd.plot <- ggplot(merged_df, aes( x = mass, y = mean ) ) +
