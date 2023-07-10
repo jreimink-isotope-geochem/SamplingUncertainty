@@ -60,10 +60,41 @@ ui <- fluidPage(
       
       
       tabPanel("Input Data", 
-               verbatimTextOutput("sumOutput"),
-               br(),
                textInput( "sampleName", "Sample Name:", value = "sample name here" ),
                br(),
+               selectizeInput(
+                 inputId = "inputOxides",
+                 label = "Select and Order Oxides",
+                 choices = c("SiO2", "TiO2", "Al2O3", "Fe2O3", "FeO", "FeOt", "MnO", "MgO", "CaO",
+                             "Na2O", "K2O", "P2O5", "H2O", "CO2", "LiO2", "NdO" ),
+                 selected = c("SiO2", "TiO2", "Al2O3", "FeOt", "MnO", "MgO", "CaO",
+                              "Na2O", "K2O", "P2O5" ),
+                 multiple = TRUE
+               ),
+               selectizeInput(
+                 inputId = "inputTraces",
+                 label = "Select and Order Trace Elements",
+                 choices = c("Zr", "Th", "Ba", "La", "Nd", "Yb" ),
+                 selected = c( "Zr", "Th", "Ba" ),
+                 multiple = TRUE
+               ),
+               br(),
+               verbatimTextOutput("sumOutput"),
+               br(),
+               
+               radioButtons(
+                 inputId ="input_type",
+                 label = 'Data Input Type',
+                 choiceNames = c("Edit File", "Upload File"),
+                 choiceValues = c('Edit', 'Upload'),
+                 selected = "Edit",
+                 inline = TRUE ),
+               #deactivate input sample size field when range of samples is selected
+               conditionalPanel(
+                 condition = "input.input_type == 'Upload'",
+                 fileInput("fileInput", "Upload CSV File"),
+                 dataTableOutput( "tableOutput")
+               ),
                p("Dimensions in cm, densities in kg/cm3"),
                rHandsontableOutput("MineralParameters") ),
       
@@ -78,14 +109,6 @@ ui <- fluidPage(
                # h4("Whole-rock Standard Deviations"), dataTableOutput("output_sds"),
                # downloadButton("dwnldSDTablebtn", "Download StDev Table" ) ),
       
-      
-      # tabPanel("Oxide Plot", plotOutput("OxidePlotChangeable"),
-      #          br(),
-      #          selectInput(
-      #            inputId = "column",
-      #            label = "Select an oxide:",
-      #            choices = c( "SiO2", "TiO2", "Al2O3", "FeO", "MnO", "MgO", "CaO", "Na2O", "K2O")
-      #          ) ),
       
       #Tab 3: Output plot - Discordance Plot (lower and Upper int)
       tabPanel("Modeled Oxide RSDs", plotOutput("RSDsPlot"),
@@ -124,19 +147,74 @@ ui <- fluidPage(
 )
 
 # Define server logic
-server <- function(input, output) {
+server <- function(input, output, session) {
   
   # Read the data from CSV
   min_parameters <- reactiveVal(read.csv("min_parameters_input.csv", stringsAsFactors = FALSE))
-  ## oxide to plot
-  data.oxide <- reactiveVal(NULL)
+
+  ## created the selected columns for export
+  selectedOxides <- reactive({
+    input$inputOxides
+  })
+  selectedTraces <- reactive({
+    input$inputTraces
+  })
   
-  # Render the min_density table
-  output$MineralParameters <- renderRHandsontable({
-    rhandsontable(min_parameters(), rowHeaders = NULL, width = "100%" ) %>%
-      hot_col(col = "Distribution", type = "dropdown", source = c("h", "b", "p")) %>%
-      hot_cols(list(editable = TRUE)) %>%
-      hot_col("Modes", renderer = "
+  
+  
+  
+  uploadedData <- reactive({
+    req(input$fileInput)
+    inFile <- input$fileInput
+    if (!is.null(inFile)) {
+      # Read the uploaded file
+      input.data <- read.csv(inFile$datapath, stringsAsFactors = FALSE)
+      return(input.data)
+    }
+  })
+  
+
+  
+  
+  # output$MineralParameters <- renderRHandsontable({
+  #   if (input$dataOption = "Edit") {
+  #     rhandsontable(min_parameters(), rowHeaders = NULL, width = "100%") %>%
+  #       hot_col(col = "Distribution", type = "dropdown", source = c("h", "b", "p")) %>%
+  #       hot_cols(list(editable = TRUE)) %>%
+  #       hot_col("Modes", renderer = "
+  #       function(instance, td, row, col, prop, value, cellProperties) {
+  #         Handsontable.renderers.TextRenderer.apply(this, arguments);
+  #         if (parseFloat(value) !== 0) {
+  #           $(td).css('background-color', 'lightyellow');
+  #         }
+  #       }
+  #     ")
+  #   } else {
+  #     if (!is.null(input$fileInput ) ) {
+  #       inFile <- input$fileInput
+  #       data <- read.csv(inFile$datapath, stringsAsFactors = FALSE)
+  #       rhandsontable(data, rowHeaders = NULL, width = "100%") %>%
+  #         hot_col(col = "Distribution", type = "dropdown", source = c("h", "b", "p")) %>%
+  #         hot_cols(list(editable = TRUE)) %>%
+  #         hot_col("Modes", renderer = "
+  #         function(instance, td, row, col, prop, value, cellProperties) {
+  #           Handsontable.renderers.TextRenderer.apply(this, arguments);
+  #           if (parseFloat(value) !== 0) {
+  #             $(td).css('background-color', 'lightyellow');
+  #           }
+  #         }
+  #       ")
+  #     }
+  #   }
+  # })
+  observe( 
+    if( input$input_type == "Upload" ) {
+      output$MineralParameters <- renderRHandsontable({
+        rhandsontable(uploadedData(), rowHeaders = NULL, width = "100%" ) %>%
+          hot_col(col = "Distribution", type = "dropdown", source = c("h", "b", "p")) %>%
+          hot_cols(list(editable = TRUE), fixedColumnsLeft = 1) %>%
+          hot_rows(fixedRowsTop = 1) %>%
+          hot_col("Modes", renderer = "
         function(instance, td, row, col, prop, value, cellProperties) {
           Handsontable.renderers.TextRenderer.apply(this, arguments);
           if (parseFloat(value) !== 0) {
@@ -144,40 +222,72 @@ server <- function(input, output) {
           }
         }
       ")
-  })
-  
+      })
+    }
+    else {
+      output$MineralParameters <- renderRHandsontable({
+        rhandsontable(min_parameters(), rowHeaders = NULL, width = "100%" ) %>%
+          hot_col(col = "Distribution", type = "dropdown", source = c("h", "b", "p")) %>%
+          hot_cols(list(editable = TRUE), fixedColumnsLeft = 1) %>%
+          hot_col("Modes", renderer = "
+        function(instance, td, row, col, prop, value, cellProperties) {
+          Handsontable.renderers.TextRenderer.apply(this, arguments);
+          if (parseFloat(value) !== 0) {
+            $(td).css('background-color', 'lightyellow');
+          }
+        }
+      ")
+      })
+    }
+    )
 
+
+  observeEvent(input$saveBtn, {
+    if( input$input_type == "Upload" ) {
+      newData <- hot_to_r(input$MineralParameters)
+    }
+    else {
+      newData <- hot_to_r(input$MineralParameters)
+    }
+    
+    
+    sample.size.data <- data.frame( sample.size = input$sampleSize )
+
+    # Replace "path/to/file.csv" with the actual path to your CSV file
+    write.csv(newData, "Shiny_OutPut.csv", row.names = FALSE)
+    write.csv(newData, paste(input$sampleName,"_min_parameters.csv", sep=""), row.names = FALSE)
+    write.csv(sample.size.data, "sample_size.csv", row.names = FALSE)
+    write.csv(selectedOxides(), "oxideschosen.csv", row.names = FALSE)
+    write.csv(selectedTraces(), "traceschosen.csv", row.names = FALSE)
+  
+    showModal(modalDialog(
+      "Changes saved successfully!",
+      title = "Success"
+    ))
+  })
   
   # Update the data when the table is edited
   observeEvent(input$MineralParameters$changes$changes, {
     min_parameters(hot_to_r(input$MineralParameters))
   })
   
-  # Auto-sort the data based on the 'Name' column
-  observeEvent(min_parameters(), {
+  # Auto-sort the data based on the 'Modes' column
+
+  observeEvent(
+    min_parameters(), {
     sorted_data <- min_parameters() %>%
-      arrange( desc(Modes))
-    
+      arrange( desc( Modes ) )
     min_parameters(sorted_data)
   })
+  
+  
+  
+  
   
   # Render the Save Table button
   output$saveButton <- renderUI({
     color <- if (values$tableChanged) "green" else "red"
     actionButton("saveBtn", "Save Table", style = sprintf("color: white; background-color: %s;", color))
-  })
-
-  observeEvent(input$saveBtn, {
-    newData <- hot_to_r(input$MineralParameters)
-    sample.size.data <- data.frame( sample.size = input$sampleSize )
-    # Replace "path/to/file.csv" with the actual path to your CSV file
-    write.csv(newData, "Shiny_OutPut.csv", row.names = FALSE)
-    write.csv(newData, paste(input$sampleName,"_min_parameters.csv", sep=""), row.names = FALSE)
-    write.csv(sample.size.data, "sample_size.csv", row.names = FALSE)
-    showModal(modalDialog(
-      "Changes saved successfully!",
-      title = "Success"
-    ))
   })
   
   ## Sum up the mode data and display
@@ -187,7 +297,7 @@ server <- function(input, output) {
       dplyr::select(Modes) %>%
       summarise("Total Mode" = sum(Modes))
   })
-  
+
   # Display the sum of the Modes column
   output$sumOutput <- renderPrint({
     sumModes()
@@ -199,8 +309,6 @@ server <- function(input, output) {
     # Do something with the sampleSize value
     # ...
   })
-  
-
   
   # Run the reduction with an if statement depending on whether it is pertaining to many sample sizes or
   #. just a few
@@ -229,7 +337,7 @@ server <- function(input, output) {
     # Retrieve the result from the environment
     if (input$calc_type == "Single") {
 
-      wr.summary.table <- env$wr.summary.table.export
+      wr.summary.table <- env$wr.summary.table
       wr.comp.model.comb <- env$wr.comp.model.comb
       
     } else if (input$calc_type == "Range") {
@@ -256,27 +364,10 @@ server <- function(input, output) {
       if (input$calc_type == "Single") {
         datatable(wr.summary.table)
       } else if (input$calc_type == "Range") {
-        datatable(wr.summary.table.export, options = list(pageLength = 30, info = FALSE))
+        datatable(summary.means, options = list(pageLength = 30, info = FALSE))
       }
     })
-    # 
-    # ## Render other tables if Range is selected
-    # output$output_rsds <- renderDataTable({
-    #   if (input$calc_type == "Single") {
-    #     NULL
-    #   } else if (input$calc_type == "Range") {
-    #     datatable(rsds)
-    #   }
-    # })
-    # 
-    # output$output_sds <- renderDataTable({
-    #   if (input$calc_type == "Single") {
-    #     NULL
-    #   } else if (input$calc_type == "Range") {
-    #     datatable(sds)
-    #   }
-    # })
-    
+  
     observeEvent( input$runModelBtn, {
       showModal(
         modalDialog(
@@ -285,24 +376,9 @@ server <- function(input, output) {
           } else if (input$calc_type == "Range") {
             print("Range of Sample Sizes Calculation Completed")
           }
-          
         )
       )
     })
-    
-    
-    # # Render the data.table
-    # output$myTable <- renderDataTable({
-    #   
-    #   if (input$calc_type == "Single") {
-    #     datatable( wr.summary.table )
-    #     
-    #   } else if (input$calc_type == "Range") {
-    #     # Load file for "Range of Samples" option
-    #     # Source the different file or perform necessary operations
-    #     datatable( wr.summary.table.export )
-    #   }
-    # })
 
     ## download data tables
     output$dwnldMeanTablebtn <- downloadHandler(
@@ -318,31 +394,31 @@ server <- function(input, output) {
       }
     )
     
-    output$dwnldRSDbtn <- downloadHandler(
-      filename = function() {
-        paste(input$sampleName,"Model_RSDs_", Sys.Date(), ".csv", sep = "")
-      },
-      content = function(file) {
-        if (input$calc_type == "Single") {
-          NULL
-        } else if ( input$calc_type == "Range") {
-          write.csv( rsds, file, row.names = TRUE )
-        }
-      }
-    )
-    
-    output$dwnldSDTablebtn <- downloadHandler(
-      filename = function() {
-        paste(input$sampleName,"Model_SDs_", Sys.Date(), ".csv", sep = "")
-      },
-      content = function(file) {
-        if (input$calc_type == "Single") {
-          NULL
-        } else if ( input$calc_type == "Range") {
-          write.csv( sds, file, row.names = TRUE )
-        }
-      }
-    )
+    # output$dwnldRSDbtn <- downloadHandler(
+    #   filename = function() {
+    #     paste(input$sampleName,"Model_RSDs_", Sys.Date(), ".csv", sep = "")
+    #   },
+    #   content = function(file) {
+    #     if (input$calc_type == "Single") {
+    #       NULL
+    #     } else if ( input$calc_type == "Range") {
+    #       write.csv( rsds, file, row.names = TRUE )
+    #     }
+    #   }
+    # )
+    # 
+    # output$dwnldSDTablebtn <- downloadHandler(
+    #   filename = function() {
+    #     paste(input$sampleName,"Model_SDs_", Sys.Date(), ".csv", sep = "")
+    #   },
+    #   content = function(file) {
+    #     if (input$calc_type == "Single") {
+    #       NULL
+    #     } else if ( input$calc_type == "Range") {
+    #       write.csv( sds, file, row.names = TRUE )
+    #     }
+    #   }
+    # )
     
     ## download the mass vs RSD for each oxide plot
     output$dwnlSDplotbtn <- downloadHandler(

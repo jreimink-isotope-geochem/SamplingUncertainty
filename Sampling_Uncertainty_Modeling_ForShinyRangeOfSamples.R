@@ -118,8 +118,15 @@ for( j in 1:length(sample.masses)) {
                       ifelse( min.dists[col] == "b", err.num.min.grains.b[1, col],
                               err.num.min.grains.p[1, col] ) )
     
-    # Generate resampled value based on mean and sd
-    resampled_val <- rnorm( nreps, mean = mean_val, sd = sd_val )
+    # Generate resampled value based on mean and sd - using Poisson but others are normally
+    # distributed with the SD values being defined by the Stanley spreadsheet. So, effectively normal
+    if( min.dists[col] == "p" ){
+      resampled_val <- rpois(n = nreps, lambda = mean_val)
+    } else {
+      resampled_val <- rnorm( nreps, mean = mean_val, sd = sd_val )
+    } 
+    
+    # resampled_val <- rnorm( nreps, mean = mean_val, sd = sd_val )
     # Assign resampled value to corresponding column in the empty dataframe
     grain.num.model[, col] <- resampled_val
   }
@@ -147,28 +154,29 @@ for( j in 1:length(sample.masses)) {
   grain.mass.summary$rsd <- grain.mass.summary$stdev / grain.mass.summary$means * 100
   
   ## calculate mineral comps - this is in the same order as the elemental oxides listed in the min.comps file (row orders)
-  minerals.comp.model <- list( SiO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[1, ] ), `*` ),
-                               TiO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[2, ] ), `*` ),
-                               Al2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps[3, ] ), `*` ),
-                               Cr2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps[4, ] ), `*` ),
-                               Fe2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps[5, ] ), `*` ),
-                               FeO = sweep( mineral.model.normalized, 2, unlist( min.comps[6, ] ), `*` ),
-                               MnO = sweep( mineral.model.normalized, 2, unlist( min.comps[7, ] ), `*` ),
-                               MgO = sweep( mineral.model.normalized, 2, unlist( min.comps[8, ] ), `*` ),
-                               CaO = sweep( mineral.model.normalized, 2, unlist( min.comps[9, ] ), `*` ),
-                               Na2O = sweep( mineral.model.normalized, 2, unlist( min.comps[10, ] ), `*` ),
-                               K2O = sweep( mineral.model.normalized, 2, unlist( min.comps[11, ] ), `*` ),
-                               O = sweep( mineral.model.normalized, 2, unlist( min.comps[12, ] ), `*` ),
-                               H2O = sweep( mineral.model.normalized, 2, unlist( min.comps[13, ] ), `*` ),
-                               P2O5 = sweep( mineral.model.normalized, 2, unlist( min.comps[14, ] ), `*` ),
-                               ZrO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[15, ] ), `*` ),
-                               Ce2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps[16, ] ), `*` ),
-                               CO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[17, ] ), `*` ),
-                               SO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[18, ] ), `*` ),
-                               LiO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[19, ] ), `*` ),
-                               ThO2 = sweep( mineral.model.normalized, 2, unlist( min.comps[20, ] ), `*` ),
-                               BaO = sweep( mineral.model.normalized, 2, unlist( min.comps[21, ] ), `*` )
+  minerals.comp.model <- list( SiO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["SiO2", ] ), `*` ),
+                               TiO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["TiO2", ] ), `*` ),
+                               Al2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Al2O3", ] ), `*` ),
+                               Cr2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Cr2O3", ] ), `*` ),
+                               Fe2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Fe2O3", ] ), `*` ),
+                               FeO = sweep( mineral.model.normalized, 2, unlist( min.comps["FeO", ] ), `*` ),
+                               MnO = sweep( mineral.model.normalized, 2, unlist( min.comps["MnO", ] ), `*` ),
+                               MgO = sweep( mineral.model.normalized, 2, unlist( min.comps["MgO", ] ), `*` ),
+                               CaO = sweep( mineral.model.normalized, 2, unlist( min.comps["CaO", ] ), `*` ),
+                               Na2O = sweep( mineral.model.normalized, 2, unlist( min.comps["Na2O", ] ), `*` ),
+                               K2O = sweep( mineral.model.normalized, 2, unlist( min.comps["K2O", ] ), `*` ),
+                               O = sweep( mineral.model.normalized, 2, unlist( min.comps["O", ] ), `*` ),
+                               H2O = sweep( mineral.model.normalized, 2, unlist( min.comps["H2O", ] ), `*` ),
+                               P2O5 = sweep( mineral.model.normalized, 2, unlist( min.comps["P2O5", ] ), `*` ),
+                               ZrO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["ZrO2", ] ), `*` ),
+                               Ce2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Ce2O3", ] ), `*` ),
+                               CO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["CO2", ] ), `*` ),
+                               SO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["SO2", ] ), `*` ),
+                               LiO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["LiO2", ] ), `*` ),
+                               ThO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["ThO2", ] ), `*` ),
+                               BaO = sweep( mineral.model.normalized, 2, unlist( min.comps["BaO", ] ), `*` )
   )
+
   
   minerals.comp.model$Th <- minerals.comp.model$ThO2 * 0.878809 * 10000
   minerals.comp.model$Zr <- minerals.comp.model$ZrO2 * 0.740318 * 10000
@@ -295,11 +303,20 @@ colnames(summary.wr.comp.mean) <- c( "mass", rownames( wr.summary.table.10000.g 
 write.csv( summary.wr.comp.mean, "Run.mean.comps.csv" )
 
 
+## read in the selected columns from the User input
+oxide.order <- read.csv( "oxideschosen.csv" )
+trace.order <- read.csv( "traceschosen.csv")
+# transpose to get column names
+oxide.order.plot <- t(oxide.order)
+colnames(oxide.order.plot) <- oxide.order.plot[1,]
+
+trace.order.plot <- t(trace.order)
+colnames(trace.order.plot) <- trace.order.plot[1,]
+full.plot.order <-  c(colnames(oxide.order.plot), colnames(trace.order.plot))
 
 
 ### define the order of the oxides for plotting and exporting 
-oxide.order.rsdplot <-  colnames(summary.wr.comp.mean[ , c("SiO2", "TiO2", "Al2O3", "FeOt", "MnO", "MgO", "CaO",
-                                                       "Na2O", "K2O", "P2O5")])
+oxide.order.rsdplot <-  colnames( oxide.order.plot )
 
 
 
@@ -319,9 +336,9 @@ raw.rsd.plot <- summary.rsds.test %>%
          axis.title.x = element_blank() ) +
   labs( color = "Mass (g)",
         y = "RSD on Oxide (%)")
+raw.rsd.plot
 
-
-data_long <- reshape2::melt( summary.rsds[ , c(1:4,7:12)], id.vars = "mass", variable.name = "oxide", value.name = "value")
+data_long <- reshape2::melt( summary.rsds.test, id.vars = "mass", variable.name = "oxide", value.name = "value")
 
 # Plot the data using ggplot2
 mass.oxide.plot <-  ggplot( data_long, aes( x = mass, y = value, color = oxide, group = oxide ) ) +
@@ -329,38 +346,19 @@ mass.oxide.plot <-  ggplot( data_long, aes( x = mass, y = value, color = oxide, 
   geom_line( linewidth = 1.5 ) +
   labs(x = "Mass", y = "Relative SD", color = "Variable") 
 # scale_color_viridis( discrete = T ) 
+mass.oxide.plot
 
 
 
 
-ggplot( model.rock.data.625.g, aes( x= ThO2 ) ) +
-  fte_theme_white() +
-  geom_density( color = viridis(6)[1], size = 2  ) +
-  geom_density( data = model.rock.data.1250.g, color = viridis(6)[2], size = 2  ) +
-  geom_density( data = model.rock.data.2500.g, color = viridis(6)[3], size = 2  ) +
-  geom_density( data = model.rock.data.5000.g, color = viridis(6)[4], size = 2  ) +
-  geom_density( data = model.rock.data.10000.g, color = viridis(6)[5], size = 2  ) +
-  geom_density( data = model.rock.data.20000.g, color = viridis(6)[6], size = 2  ) +
-  geom_vline( xintercept = mean(model.rock.data.625.g$ThO2 ), color = viridis(6)[1], linetype="dashed" ) +
-  geom_vline( xintercept = mean(model.rock.data.1250.g$ThO2 ), color = viridis(6)[2], linetype="dashed" ) +
-  geom_vline( xintercept = mean(model.rock.data.2500.g$ThO2 ), color = viridis(6)[3], linetype="dashed" ) +
-  geom_vline( xintercept = mean(model.rock.data.5000.g$ThO2 ), color = viridis(6)[4], linetype="dashed" ) +
-  geom_vline( xintercept = mean(model.rock.data.10000.g$ThO2 ), color = viridis(6)[5], linetype="dashed" ) +
-  geom_vline( xintercept = mean(model.rock.data.20000.g$ThO2 ), color = viridis(6)[6], linetype="dashed" ) 
 
-
-
-data_long_means <- reshape2::melt( summary.means[ , c("mass", "SiO2", "TiO2", "Al2O3", "FeOt", "MnO", "MgO", "CaO",
-                                                      "Na2O", "K2O", "P2O5", "Zr", "Th", "Ba")], id.vars = "mass", variable.name = "oxide", value.name = "mean" )
-data_long_stdev <- reshape2::melt( summary.raw.sds[ , c("mass", "SiO2", "TiO2", "Al2O3", "FeOt", "MnO", "MgO", "CaO",
-                                                        "Na2O", "K2O", "P2O5", "Zr", "Th", "Ba")], id.vars = "mass", variable.name = "oxide", value.name = "stdevs" )
+data_long_means <- reshape2::melt( summary.means[ , c("mass", full.plot.order)], id.vars = "mass", variable.name = "oxide", value.name = "mean" )
+data_long_stdev <- reshape2::melt( summary.raw.sds[ , c("mass", full.plot.order)], id.vars = "mass", variable.name = "oxide", value.name = "stdevs" )
 
 
 merged_df <- merge(data_long_means, data_long_stdev, by = c("mass", "oxide"))
 merged_df <- merged_df[order(merged_df$mass), ]
-oxide.order <-  colnames(summary.means[ , c("SiO2", "TiO2", "Al2O3", "FeOt", "MnO", "MgO", "CaO",
-                                            "Na2O", "K2O", "P2O5", "Zr", "Th", "Ba")])
-merged_df$oxide <- factor(merged_df$oxide, levels = oxide.order)
+merged_df$oxide <- factor(merged_df$oxide, levels = full.plot.order)
 merged_df <- merged_df[order(merged_df$oxide), ]
 # merged_df$dodge <- rep(c(2,4,6,8,10,13), each = 4)
 
@@ -372,7 +370,7 @@ for( i in 1:length(sample.masses) ) {
                                     summary.means[ i, ], summary.raw.sds[i,], summary.rsds[i, ] )
   
 }
-wr.summary.table.export <- wr.summary.table.export[, c("mass", oxide.order)]
+wr.summary.table.export <- wr.summary.table.export[, c("mass", full.plot.order)]
 wr.summary.table.export$value <- rep( c("Mean", "StDev", "RSD" ), times = length(sample.masses) )
 wr.summary.table.export <- wr.summary.table.export[, c(ncol(wr.summary.table.export), 1:(ncol(wr.summary.table.export)-1))]
 
