@@ -51,6 +51,7 @@ ui <- fluidPage(
     br(),
     # uiOutput("saveButton"),
     actionButton("saveBtn", "Save Table"),
+    downloadButton("dwnldTableBtn", "Download Table"),
     br(),
     actionButton("runModelBtn", "Run Modeling"),),
   
@@ -249,17 +250,13 @@ server <- function(input, output, session) {
     else {
       newData <- hot_to_r(input$MineralParameters)
     }
-    
-    
     sample.size.data <- data.frame( sample.size = input$sampleSize )
-
     # Replace "path/to/file.csv" with the actual path to your CSV file
     write.csv(newData, "Shiny_OutPut.csv", row.names = FALSE)
     write.csv(newData, paste(input$sampleName,"_min_parameters.csv", sep=""), row.names = FALSE)
     write.csv(sample.size.data, "sample_size.csv", row.names = FALSE)
     write.csv(selectedOxides(), "oxideschosen.csv", row.names = FALSE)
     write.csv(selectedTraces(), "traceschosen.csv", row.names = FALSE)
-  
     showModal(modalDialog(
       "Changes saved successfully!",
       title = "Success"
@@ -272,17 +269,12 @@ server <- function(input, output, session) {
   })
   
   # Auto-sort the data based on the 'Modes' column
-
   observeEvent(
     min_parameters(), {
     sorted_data <- min_parameters() %>%
       arrange( desc( Modes ) )
     min_parameters(sorted_data)
   })
-  
-  
-  
-  
   
   # Render the Save Table button
   output$saveButton <- renderUI({
@@ -309,6 +301,18 @@ server <- function(input, output, session) {
     # Do something with the sampleSize value
     # ...
   })
+  
+  ## download input data tables when button pushed
+  output$dwnldTableBtn <- downloadHandler(
+    newData <- hot_to_r(input$MineralParameters),
+    filename = function() {
+      paste(input$sampleName,"Input_Data_", Sys.Date(), ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv( hot_to_r(input$MineralParameters), file, row.names = TRUE )
+    }
+  )
+  
   
   # Run the reduction with an if statement depending on whether it is pertaining to many sample sizes or
   #. just a few
@@ -380,6 +384,8 @@ server <- function(input, output, session) {
       )
     })
 
+    
+    
     ## download data tables
     output$dwnldMeanTablebtn <- downloadHandler(
       filename = function() {
@@ -419,6 +425,8 @@ server <- function(input, output, session) {
     #     }
     #   }
     # )
+    
+
     
     ## download the mass vs RSD for each oxide plot
     output$dwnlSDplotbtn <- downloadHandler(
