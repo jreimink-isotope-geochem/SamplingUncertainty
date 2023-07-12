@@ -1,6 +1,3 @@
-rm( list = ls( ) )
-setwd("/Users/jessereimink/Google Drive (jxr1350@psu.edu)/Research/PSU/Projects/Treatise on Geochemistry Chapter/Modeling Uncertainties/Shiny App/")
-
 
 
 
