@@ -59,7 +59,7 @@ densities <- t( shiny.min.parameters$Densities )
 # mol.masses <- t( shiny.min.parameters$Weights )
 grain.dims <- t( cbind( shiny.min.parameters$Dimension1, shiny.min.parameters$Dimension2, shiny.min.parameters$Dimension3 )  )
 min.dists <- t( shiny.min.parameters$Distribution )
-min.comps <- t( cbind( shiny.min.parameters[, c(9:ncol(shiny.min.parameters))] ) )
+min.comps <- t( cbind( shiny.min.parameters[, c(8:ncol(shiny.min.parameters))] ) )
 
 ## Set column names to be minerals
 colnames(modes) = shiny.min.parameters$X
