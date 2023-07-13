@@ -52,7 +52,7 @@ shiny.min.parameters <- read.csv("Shiny_OutPut.csv", stringsAsFactors = FALSE)
 # Import the modes, densities, and molar masses
 modes <- t( shiny.min.parameters$Modes )
 densities <- t( shiny.min.parameters$Densities )
-mol.masses <- t( shiny.min.parameters$Weights )
+# mol.masses <- t( shiny.min.parameters$Weights )
 grain.dims <- t( cbind( shiny.min.parameters$Dimension1, shiny.min.parameters$Dimension2, shiny.min.parameters$Dimension3 )  )
 min.dists <- t( shiny.min.parameters$Distribution )
 min.comps <- t( cbind( shiny.min.parameters[, c(9:ncol(shiny.min.parameters))] ) )
@@ -60,7 +60,7 @@ min.comps <- t( cbind( shiny.min.parameters[, c(9:ncol(shiny.min.parameters))] )
 ## Set column names to be minerals
 colnames(modes) = shiny.min.parameters$X
 colnames(densities) = shiny.min.parameters$X
-colnames(mol.masses) = shiny.min.parameters$X
+# colnames(mol.masses) = shiny.min.parameters$X
 colnames(grain.dims) = shiny.min.parameters$X
 colnames(min.dists) = shiny.min.parameters$X
 colnames(min.comps) = shiny.min.parameters$X
@@ -77,13 +77,13 @@ for( j in 1:length(sample.masses)) {
   
   sample.mass = sample.masses[j]
   ## this all replicates the first columns in Stanley spreadsheet
-  inverse.molar.volume <- 1 / ( mol.masses / densities ) 
+  # inverse.molar.volume <- 1 / ( mol.masses / densities ) 
   modes.internal <- modes * densities 
   modes.wt.total <- rowSums( modes.internal )
   modes.wt <- modes.internal / modes.wt.total * 100 
-  modes.moles.internal <- modes * inverse.molar.volume 
-  tot.modes.moles.internal <- rowSums( modes.moles.internal )
-  modes.mole <- modes.moles.internal / tot.modes.moles.internal * 100 
+  # modes.moles.internal <- modes * inverse.molar.volume 
+  # tot.modes.moles.internal <- rowSums( modes.moles.internal )
+  # modes.mole <- modes.moles.internal / tot.modes.moles.internal * 100 
   grain.vols <- apply( grain.dims, 2, prod )
   grain.mass <- grain.vols * densities
   tot.min.mass <- sample.mass * modes.wt / 100 
