@@ -212,8 +212,9 @@ server <- function(input, output, session) {
     if( input$input_type == "Upload" ) {
       output$MineralParameters <- renderRHandsontable({
         rhandsontable(uploadedData(), rowHeaders = NULL, width = "100%" ) %>%
+          hot_cols( columnSorting = T, manualColumnResize = T ) %>%
           hot_col(col = "Distribution", type = "dropdown", source = c("h", "b", "p")) %>%
-          hot_cols(list(editable = TRUE), fixedColumnsLeft = 1) %>%
+          hot_cols(list(editable = TRUE), fixedColumnsLeft = 1, columnSorting = T, manualColumnResize = T ) %>%
           hot_rows(fixedRowsTop = 1) %>%
           hot_col("Modes", renderer = "
         function(instance, td, row, col, prop, value, cellProperties) {
@@ -227,9 +228,11 @@ server <- function(input, output, session) {
     }
     else {
       output$MineralParameters <- renderRHandsontable({
-        rhandsontable(min_parameters(), rowHeaders = NULL, width = "100%" ) %>%
+        rhandsontable(min_parameters(), rowHeaders = NULL ) %>%
+          # hot_cols( colwidths = c( "100px", "300px", "100px") ) %>%
+          # hot_cols( ) %>%
           hot_col(col = "Distribution", type = "dropdown", source = c("h", "b", "p")) %>%
-          hot_cols(list(editable = TRUE), fixedColumnsLeft = 1) %>%
+          hot_cols(list(editable = TRUE), fixedColumnsLeft = 1, columnSorting = T, manualColumnResize = T ) %>%
           hot_col("Modes", renderer = "
         function(instance, td, row, col, prop, value, cellProperties) {
           Handsontable.renderers.TextRenderer.apply(this, arguments);
@@ -309,7 +312,7 @@ server <- function(input, output, session) {
       paste(input$sampleName,"Input_Data_", Sys.Date(), ".csv", sep = "")
     },
     content = function(file) {
-      write.csv( hot_to_r(input$MineralParameters), file, row.names = TRUE )
+      write.csv( hot_to_r(input$MineralParameters), file, row.names = FALSE )
     }
   )
   
