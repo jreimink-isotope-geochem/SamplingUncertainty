@@ -175,21 +175,21 @@ minerals.comp.model$Th <- minerals.comp.model$ThO2 * 0.878809 * 10000
 minerals.comp.model$Zr <- minerals.comp.model$ZrO2 * 0.740318 * 10000
 minerals.comp.model$Ba <- minerals.comp.model$BaO * 0.895651 * 10000
 minerals.comp.model$Li <- minerals.comp.model$Li2O * (1/2.1527) * 10000
-minerals.comp.model$La <- minerals.comp.model$La2O3 * (1/2.1527) * 10000
-minerals.comp.model$Ce <- minerals.comp.model$Ce2O3 * (1/2.1527) * 10000
-minerals.comp.model$Pr <- minerals.comp.model$Pr2O3 * (1/2.1527) * 10000
-minerals.comp.model$Nd <- minerals.comp.model$Nd2O3 * (1/2.1527) * 10000
-minerals.comp.model$Sm <- minerals.comp.model$Sm2O3 * (1/2.1527) * 10000
-minerals.comp.model$Eu <- minerals.comp.model$Eu2O3 * (1/2.1527) * 10000
-minerals.comp.model$Gd <- minerals.comp.model$Gd2O3 * (1/2.1527) * 10000
-minerals.comp.model$Tb <- minerals.comp.model$Tb2O3 * (1/2.1527) * 10000
-minerals.comp.model$Dy <- minerals.comp.model$Dy2O3 * (1/2.1527) * 10000
-minerals.comp.model$Ho <- minerals.comp.model$Ho2O3 * (1/2.1527) * 10000
-minerals.comp.model$Er <- minerals.comp.model$Er2O3 * (1/2.1527) * 10000
-minerals.comp.model$Tm <- minerals.comp.model$Tm2O3 * (1/2.1527) * 10000
-minerals.comp.model$Yb <- minerals.comp.model$Yb2O3 * (1/2.1527) * 10000
-minerals.comp.model$Lu <- minerals.comp.model$Lu2O3 * (1/2.1527) * 10000
-minerals.comp.model$Y <- minerals.comp.model$Y2O3 * (1/2.1527) * 10000
+minerals.comp.model$La <- minerals.comp.model$La2O3 * (1/1.1728) * 10000
+minerals.comp.model$Ce <- minerals.comp.model$Ce2O3 * (1/1.1713) * 10000
+minerals.comp.model$Pr <- minerals.comp.model$Pr2O3 * (1/1.1703) * 10000
+minerals.comp.model$Nd <- minerals.comp.model$Nd2O3 * (1/1.1664) * 10000
+minerals.comp.model$Sm <- minerals.comp.model$Sm2O3 * (1/1.1596) * 10000
+minerals.comp.model$Eu <- minerals.comp.model$Eu2O3 * (1/1.1579) * 10000
+minerals.comp.model$Gd <- minerals.comp.model$Gd2O3 * (1/1.1526) * 10000
+minerals.comp.model$Tb <- minerals.comp.model$Tb2O3 * (1/1.1510) * 10000
+minerals.comp.model$Dy <- minerals.comp.model$Dy2O3 * (1/1.1477) * 10000
+minerals.comp.model$Ho <- minerals.comp.model$Ho2O3 * (1/1.1455) * 10000
+minerals.comp.model$Er <- minerals.comp.model$Er2O3 * (1/1.1435) * 10000
+minerals.comp.model$Tm <- minerals.comp.model$Tm2O3 * (1/1.1421) * 10000
+minerals.comp.model$Yb <- minerals.comp.model$Yb2O3 * (1/1.1387) * 10000
+minerals.comp.model$Lu <- minerals.comp.model$Lu2O3 * (1/1.1371) * 10000
+minerals.comp.model$Y <- minerals.comp.model$Y2O3 * (1/1.2699) * 10000
 minerals.comp.model$FeOt <- ( minerals.comp.model$Fe2O3 * 0.89981 ) + minerals.comp.model$FeO 
 # sum the rows in each list to get rock oxide compositions
 wr.comp.model <- lapply( minerals.comp.model, rowSums, na.rm = T )
