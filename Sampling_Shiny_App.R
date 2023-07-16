@@ -10,13 +10,13 @@ library(tidyr)
 
 # Define UI
 ui <- fluidPage(
-  
-  titlePanel(""),
+  h1( id="big-heading", "Geochemical Uncertainty in Geological Sampling"),
+  tags$style( HTML( "#big-heading{ color: #213e47;
+                    text-align:center}")),
   sidebarPanel(
     tags$div(
       style = "background-color: #f2f2f2;",
-      h4(style = "text-align: center;", "Geochemical Uncertainty in Geological Sampling"),
-      p(style = "text-align: center;", 
+      p(style = "text-align: left;", 
         HTML("This app was written by Jesse Reimink and Tom Chacko 
         and is largely based on the sampling error algorithms of 
         Stanley (2003) but also incorporates the effects of closure on 
@@ -53,21 +53,25 @@ ui <- fluidPage(
                 h5("Instructions:"),
                 tags$hr(style = "border: 1px solid black; margin-top: 10px;"),
                 p(HTML("<ol>
-      <li>Enter data directly in the <b>Input Data</b> table to the right or 
-      select <b>Download Table</b> button below and enter and save input data 
-      in an Excel (csv format) table. Select <b>Upload File</b> button on right 
-      to upload your Excel input file. Mineral mode inputs are in volume % and 
+      <li>To enter the input data directly in the app, click on the <b>Input Data</b> tab above.
+      Note that this is a one-time data entry where input will be lost when the app is closed. 
+      Alternatively, select the <b>Download Table</b> button to the left and enter and 
+      save input data in an Excel (csv format) table. Do NOT change the formatting of this table,
+      save it as a .csv file, and re-upload it. To re-upload, select <b>Upload File</b> button 
+      on right to upload your .csv input file. Mineral mode inputs are in volume % and 
       grain dimensions in centimeters. Distribution types: h = hypergeometric; 
       b = binomial; p = Poisson. Mineral compositions (from EPMA data) are in 
       weight % oxide.</li>
-      <li>Enter the sample name, which will be saved to output tables and plots.</li>
-      <li>Select the <b>Type of Calculation</b> (left tab): <i>Range of Sample Sizes</i> 
-      models the rock over a range of sample sizes (masses) from 625 to 20,000 grams; 
-      Press the <b>Save Table</b> button - this must be done for the program to
-      run the calculation for the desired rock composition.</li>
-      <li>Press <b>Run Modeling</b> and wait for program to finish.</li>
-      <li>View and download output table and plots using the output tabs on the 
-                       top right. Output table (<i>Results</i>) gives the average major-, 
+      <li>In the <b>Input Data</b> tab window, enter the sample name, which will be saved to 
+      output tables and plots.</li>
+      <li>Select the <b>Type of Calculation</b> (left side panel): <i>Range of Sample Sizes</i> 
+      models the rock over a range of sample sizes (masses) from 625 to 20,000 grams</li>
+      <li>Press the <b>Save Table</b> button (left panel) - this must be done for the program to
+      run the calculation for the desired rock composition. Additionally, it is recommended that you 
+      download the final table before running by using the <b>Download Table</b> button and saving the 
+      file for your records. </li>
+      <li>Press <b>Run Modeling</b> (left panel) and wait for program to finish.</li>
+      <li>View and download output table and plots using the output tabs above. Output table (<i>Results</i>) gives the average major-, 
                        minor- and selected trace-element composition derived from the 
                        10,000 simulations of the input rock modal composition. The table 
                        also reports, for a given sample mass and mineral grain sizes, 
