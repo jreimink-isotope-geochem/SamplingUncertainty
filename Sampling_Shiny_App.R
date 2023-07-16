@@ -17,23 +17,11 @@ ui <- fluidPage(
       style = "background-color: #f2f2f2;",
       h4(style = "text-align: center;", "Geochemical Uncertainty in Geological Sampling"),
       p(style = "text-align: center;", 
-        HTML("This app was written by <br> 
-             Drs. Jesse Reimink and Tom Chacko <br> 
-             and is largely based on the sampling error algorithms of <br> 
-             Stanley (2003) but also incorporate the effects of closure on <br>
-             uncertainty estimates associated with whole-rock compositions")),
-      tags$hr(style = "border: 1px solid black; margin-top: 10px;"),
-      h5("Instructions:"),
-      p(HTML("<ol>
-      <li>Enter data in the <b>Input Data</b> tab below</li>
-      <li>Enter the sample name that will be saved to output tables and plots</li>
-      <li>Select the <b>Type of Calculation</b> below. <i>Range of Sample Sizes</i> models 
-      the rock over a range of sample sizes (masses), 
-      while the <i>Defined Sample Size</i> uses a user-defined sample size</li>
-      <li>Press the <b>Save Table</b> button - this must be done for the program to run
-      the calculation for the desired rock composition</li>
-      <li>Press <b>Run Modeling</b> and wait for program to finish</li>
-      <li>View and download output files in the tabs in the output section</li>")),
+        HTML("This app was written by Jesse Reimink and Tom Chacko 
+        and is largely based on the sampling error algorithms of 
+        Stanley (2003) but also incorporates the effects of closure on 
+        uncertainty estimates associated with whole-rock compositions
+             ")),
     ),
     tags$hr(style = "border: 1px solid black; margin-top: 10px;"),      
     radioButtons(
@@ -57,9 +45,35 @@ ui <- fluidPage(
   
   mainPanel(
     tabsetPanel(
-      # Tab 1: Output table
-      
-      
+
+      # Tab 1: Input table -       
+      tabPanel( "Instructions", 
+                tags$div(
+                  tags$hr(style = "border: 1px solid black; margin-top: 10px;"),
+                h5("Instructions:"),
+                tags$hr(style = "border: 1px solid black; margin-top: 10px;"),
+                p(HTML("<ol>
+      <li>Enter data directly in the <b>Input Data</b> table to the right or 
+      select <b>Download Table</b> button below and enter and save input data 
+      in an Excel (csv format) table. Select <b>Upload File</b> button on right 
+      to upload your Excel input file. Mineral mode inputs are in volume % and 
+      grain dimensions in centimeters. Distribution types: h = hypergeometric; 
+      b = binomial; p = Poisson. Mineral compositions (from EPMA data) are in 
+      weight % oxide.</li>
+      <li>Enter the sample name, which will be saved to output tables and plots.</li>
+      <li>Select the <b>Type of Calculation</b> (left tab): <i>Range of Sample Sizes</i> 
+      models the rock over a range of sample sizes (masses) from 625 to 20,000 grams; 
+      Press the <b>Save Table</b> button - this must be done for the program to
+      run the calculation for the desired rock composition.</li>
+      <li>Press <b>Run Modeling</b> and wait for program to finish.</li>
+      <li>View and download output table and plots using the output tabs on the 
+                       top right. Output table (<i>Results</i>) gives the average major-, 
+                       minor- and selected trace-element composition derived from the 
+                       10,000 simulations of the input rock modal composition. The table 
+                       also reports, for a given sample mass and mineral grain sizes, 
+                       the predicted sampling error standard deviation and relative 
+                       standard deviation (RSD) for each oxide or element.</li>" ) ) ) ),
+      # Tab 2: Input table - 
       tabPanel("Input Data", 
                textInput( "sampleName", "Sample Name:", value = "sample name here" ),
                br(),
@@ -67,7 +81,7 @@ ui <- fluidPage(
                  inputId = "inputOxides",
                  label = "Select and Order Oxides",
                  choices = c("SiO2", "TiO2", "Al2O3", "Fe2O3", "FeO", "FeOt", "MnO", "MgO", "CaO",
-                             "Na2O", "K2O", "P2O5", "H2O", "CO2", "LiO2", "NdO" ),
+                             "Na2O", "K2O", "P2O5", "H2O", "CO2", "Li2O", "Nd2O3" ),
                  selected = c("SiO2", "TiO2", "Al2O3", "FeOt", "MnO", "MgO", "CaO",
                               "Na2O", "K2O", "P2O5" ),
                  multiple = TRUE
@@ -75,7 +89,7 @@ ui <- fluidPage(
                selectizeInput(
                  inputId = "inputTraces",
                  label = "Select and Order Trace Elements",
-                 choices = c("Zr", "Th", "Ba", "La", "Nd", "Yb" ),
+                 choices = c("Zr", "Th", "Ba", "La", "Nd", "Yb", "Li" ),
                  selected = c( "Zr", "Th", "Ba" ),
                  multiple = TRUE
                ),
