@@ -81,7 +81,9 @@ ui <- fluidPage(
                  inputId = "inputOxides",
                  label = "Select and Order Oxides",
                  choices = c("SiO2", "TiO2", "Al2O3", "Fe2O3", "FeO", "FeOt", "MnO", "MgO", "CaO",
-                             "Na2O", "K2O", "P2O5", "H2O", "CO2", "Li2O", "Nd2O3" ),
+                             "Na2O", "K2O", "P2O5", "H2O", "CO2", "Li2O", "ThO2", "BaO", "ZrO2", 
+                             "La2O3", "Ce2O3", "Pr2O3", "Nd2O3", "Sm2O3", "Eu2O3", "Gd2O3", "Tb2O3",
+                             "Dy2O3", "Ho2O3", "Er2O3", "Tm2O3", "Yb2O3", "Lu2O3", "Y2O3" ),
                  selected = c("SiO2", "TiO2", "Al2O3", "FeOt", "MnO", "MgO", "CaO",
                               "Na2O", "K2O", "P2O5" ),
                  multiple = TRUE
@@ -89,7 +91,8 @@ ui <- fluidPage(
                selectizeInput(
                  inputId = "inputTraces",
                  label = "Select and Order Trace Elements",
-                 choices = c("Zr", "Th", "Ba", "La", "Nd", "Yb", "Li" ),
+                 choices = c("Zr", "Th", "Ba", "Li", "La", "Ce", "Pr", "Nd", "Sm", "Eu", "Gd", 
+                             "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Y", "Li" ),
                  selected = c( "Zr", "Th", "Ba" ),
                  multiple = TRUE
                ),
