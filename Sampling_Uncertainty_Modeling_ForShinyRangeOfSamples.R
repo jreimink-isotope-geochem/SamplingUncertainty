@@ -132,27 +132,42 @@ for( j in 1:length(sample.masses)) {
   grain.mass.summary$rsd <- grain.mass.summary$stdev / grain.mass.summary$means * 100
   
   ## calculate mineral comps - this is in the same order as the elemental oxides listed in the min.comps file (row orders)
-  minerals.comp.model <- list( SiO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["SiO2", ] ), `*` ),
-                               TiO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["TiO2", ] ), `*` ),
+  minerals.comp.model <- list( SiO2 =  sweep( mineral.model.normalized, 2, unlist( min.comps["SiO2", ] ), `*` ),
+                               TiO2 =  sweep( mineral.model.normalized, 2, unlist( min.comps["TiO2", ] ), `*` ),
                                Al2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Al2O3", ] ), `*` ),
                                Cr2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Cr2O3", ] ), `*` ),
                                Fe2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Fe2O3", ] ), `*` ),
-                               FeO = sweep( mineral.model.normalized, 2, unlist( min.comps["FeO", ] ), `*` ),
-                               MnO = sweep( mineral.model.normalized, 2, unlist( min.comps["MnO", ] ), `*` ),
-                               MgO = sweep( mineral.model.normalized, 2, unlist( min.comps["MgO", ] ), `*` ),
-                               CaO = sweep( mineral.model.normalized, 2, unlist( min.comps["CaO", ] ), `*` ),
-                               Na2O = sweep( mineral.model.normalized, 2, unlist( min.comps["Na2O", ] ), `*` ),
-                               K2O = sweep( mineral.model.normalized, 2, unlist( min.comps["K2O", ] ), `*` ),
-                               O = sweep( mineral.model.normalized, 2, unlist( min.comps["O", ] ), `*` ),
-                               H2O = sweep( mineral.model.normalized, 2, unlist( min.comps["H2O", ] ), `*` ),
-                               P2O5 = sweep( mineral.model.normalized, 2, unlist( min.comps["P2O5", ] ), `*` ),
-                               ZrO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["ZrO2", ] ), `*` ),
+                               FeO =   sweep( mineral.model.normalized, 2, unlist( min.comps["FeO", ] ), `*` ),
+                               MnO =   sweep( mineral.model.normalized, 2, unlist( min.comps["MnO", ] ), `*` ),
+                               MgO =   sweep( mineral.model.normalized, 2, unlist( min.comps["MgO", ] ), `*` ),
+                               CaO =   sweep( mineral.model.normalized, 2, unlist( min.comps["CaO", ] ), `*` ),
+                               Na2O =  sweep( mineral.model.normalized, 2, unlist( min.comps["Na2O", ] ), `*` ),
+                               K2O =   sweep( mineral.model.normalized, 2, unlist( min.comps["K2O", ] ), `*` ),
+                               O =     sweep( mineral.model.normalized, 2, unlist( min.comps["O", ] ), `*` ),
+                               H2O =   sweep( mineral.model.normalized, 2, unlist( min.comps["H2O", ] ), `*` ),
+                               P2O5 =  sweep( mineral.model.normalized, 2, unlist( min.comps["P2O5", ] ), `*` ),
+                               ZrO2 =  sweep( mineral.model.normalized, 2, unlist( min.comps["ZrO2", ] ), `*` ),
                                Ce2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Ce2O3", ] ), `*` ),
-                               CO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["CO2", ] ), `*` ),
-                               SO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["SO2", ] ), `*` ),
-                               LiO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["LiO2", ] ), `*` ),
-                               ThO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["ThO2", ] ), `*` ),
-                               BaO = sweep( mineral.model.normalized, 2, unlist( min.comps["BaO", ] ), `*` )
+                               CO2 =   sweep( mineral.model.normalized, 2, unlist( min.comps["CO2", ] ), `*` ),
+                               SO2 =   sweep( mineral.model.normalized, 2, unlist( min.comps["SO2", ] ), `*` ),
+                               LiO2 =  sweep( mineral.model.normalized, 2, unlist( min.comps["Li2O3", ] ), `*` ),
+                               ThO2 =  sweep( mineral.model.normalized, 2, unlist( min.comps["ThO2", ] ), `*` ),
+                               BaO =   sweep( mineral.model.normalized, 2, unlist( min.comps["BaO", ] ), `*` ),
+                               La2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["La2O3", ] ), `*` ),
+                               Ce2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Ce2O3", ] ), `*` ),
+                               Pr2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Pr2O3", ] ), `*` ),
+                               Nd2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Nd2O3", ] ), `*` ),
+                               Sm2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Sm2O3", ] ), `*` ),
+                               Eu2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Eu2O3", ] ), `*` ),
+                               Gd2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Gd2O3", ] ), `*` ),
+                               Tb2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Tb2O3", ] ), `*` ),
+                               Dy2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Dy2O3", ] ), `*` ),
+                               Ho2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Ho2O3", ] ), `*` ),
+                               Er2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Er2O3", ] ), `*` ),
+                               Tm2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Tm2O3", ] ), `*` ),
+                               Yb2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Yb2O3", ] ), `*` ),
+                               Lu2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Lu2O3", ] ), `*` ),
+                               Y2O3 =  sweep( mineral.model.normalized, 2, unlist( min.comps["Y2O3", ] ), `*` )
   )
 
   
@@ -160,6 +175,10 @@ for( j in 1:length(sample.masses)) {
   minerals.comp.model$Zr <- minerals.comp.model$ZrO2 * 0.740318 * 10000
   minerals.comp.model$Ba <- minerals.comp.model$BaO * 0.895651 * 10000
   minerals.comp.model$FeOt <- ( minerals.comp.model$Fe2O3 * 0.89981 ) + minerals.comp.model$FeO 
+  
+  
+  
+  
   # sum the rows in each list to get rock oxide compositions
   wr.comp.model <- lapply( minerals.comp.model, rowSums, na.rm = T )
   # unlist them into a dataframe
