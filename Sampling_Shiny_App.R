@@ -92,7 +92,7 @@ ui <- fluidPage(
                  inputId = "inputTraces",
                  label = "Select and Order Trace Elements",
                  choices = c("Zr", "Th", "Ba", "Li", "La", "Ce", "Pr", "Nd", "Sm", "Eu", "Gd", 
-                             "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Y", "Li" ),
+                             "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Y" ),
                  selected = c( "Zr", "Th", "Ba" ),
                  multiple = TRUE
                ),
