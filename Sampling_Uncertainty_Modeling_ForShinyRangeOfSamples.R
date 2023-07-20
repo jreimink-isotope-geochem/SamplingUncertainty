@@ -147,7 +147,6 @@ for( j in 1:length(sample.masses)) {
                                H2O =   sweep( mineral.model.normalized, 2, unlist( min.comps["H2O", ] ), `*` ),
                                P2O5 =  sweep( mineral.model.normalized, 2, unlist( min.comps["P2O5", ] ), `*` ),
                                ZrO2 =  sweep( mineral.model.normalized, 2, unlist( min.comps["ZrO2", ] ), `*` ),
-                               Ce2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Ce2O3", ] ), `*` ),
                                CO2 =   sweep( mineral.model.normalized, 2, unlist( min.comps["CO2", ] ), `*` ),
                                SO2 =   sweep( mineral.model.normalized, 2, unlist( min.comps["SO2", ] ), `*` ),
                                Li2O =  sweep( mineral.model.normalized, 2, unlist( min.comps["Li2O", ] ), `*` ),
