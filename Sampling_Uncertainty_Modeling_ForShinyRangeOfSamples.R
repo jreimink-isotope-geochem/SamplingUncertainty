@@ -23,6 +23,7 @@ fte_theme_white <- function() {
     theme( axis.title.y = element_text( size = 36, color = color.axis.title, vjust = 1.25 ) ) +
     theme( plot.margin = unit( c( 0.35, 0.2, 0.3, 0.35 ), "cm" ) )
 }
+
 shiny.min.parameters <- read.csv("Shiny_OutPut.csv", stringsAsFactors = FALSE)
 
 

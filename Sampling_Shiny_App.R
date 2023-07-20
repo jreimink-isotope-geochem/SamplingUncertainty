@@ -138,7 +138,7 @@ ui <- fluidPage(
                downloadButton( "dwnldRSDplotbtn", "Download Plot" ) ),
       
       # Tab 4: Output plot - Download StDev plot
-      tabPanel("Standard Deviations", plotOutput("SDsPlot"),
+      tabPanel("Elemental Distributions", plotOutput("SDsPlot", height = "1000px"),
                br(),
                downloadButton("dwnlSDplotbtn", "Download Plot" ) ),
     )
