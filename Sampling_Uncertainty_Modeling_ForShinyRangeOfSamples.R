@@ -150,7 +150,7 @@ for( j in 1:length(sample.masses)) {
                                Ce2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Ce2O3", ] ), `*` ),
                                CO2 =   sweep( mineral.model.normalized, 2, unlist( min.comps["CO2", ] ), `*` ),
                                SO2 =   sweep( mineral.model.normalized, 2, unlist( min.comps["SO2", ] ), `*` ),
-                               LiO2 =  sweep( mineral.model.normalized, 2, unlist( min.comps["Li2O3", ] ), `*` ),
+                               Li2O =  sweep( mineral.model.normalized, 2, unlist( min.comps["Li2O", ] ), `*` ),
                                ThO2 =  sweep( mineral.model.normalized, 2, unlist( min.comps["ThO2", ] ), `*` ),
                                BaO =   sweep( mineral.model.normalized, 2, unlist( min.comps["BaO", ] ), `*` ),
                                La2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["La2O3", ] ), `*` ),

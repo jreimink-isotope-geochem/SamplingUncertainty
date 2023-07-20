@@ -1,6 +1,8 @@
 
 ## Single Sample Size
 
+# rm( list = ls( ) )
+
 
 
 fte_theme_white <- function() {
@@ -29,8 +31,7 @@ fte_theme_white <- function() {
 }
 
 
-# setwd("/Users/jessereimink/Google Drive (jxr1350@psu.edu)/Research/PSU/Projects/Treatise on Geochemistry Chapter/Modeling Uncertainties/Shiny App/")
-shiny.min.parameters <- read.csv("Shiny_OutPut.csv", stringsAsFactors = FALSE)
+shiny.min.parameters <- read.csv( "Shiny_OutPut.csv", stringsAsFactors = FALSE)
 sample.mass.g <- read.csv("sample_size.csv", stringsAsFactors = FALSE)
 
 #############################  DATA IMPORT #############################
@@ -60,7 +61,7 @@ sample.mass <- sample.mass.g$sample.size[1]
 ## this all replicates the first columns in Stanley spreadsheet
 # inverse.molar.volume <- 1 / ( mol.masses / densities ) 
 modes.internal <- modes * densities 
-modes.wt.total <- rowSums( modes.internal )
+modes.wt.total <- rowSums( modes.internal, na.rm = T )
 modes.wt <- modes.internal / modes.wt.total * 100 
 # modes.moles.internal <- modes * inverse.molar.volume 
 # tot.modes.moles.internal <- rowSums( modes.moles.internal )
@@ -151,7 +152,7 @@ minerals.comp.model <- list( SiO2 = sweep( mineral.model.normalized, 2, unlist( 
                              ZrO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["ZrO2", ] ), `*` ),
                              CO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["CO2", ] ), `*` ),
                              SO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["SO2", ] ), `*` ),
-                             LiO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["Li2O", ] ), `*` ),
+                             Li2O = sweep( mineral.model.normalized, 2, unlist( min.comps["Li2O", ] ), `*` ),
                              ThO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["ThO2", ] ), `*` ),
                              BaO = sweep( mineral.model.normalized, 2, unlist( min.comps["BaO", ] ), `*` ),
                              La2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["La2O3", ] ), `*` ),
