@@ -37,10 +37,6 @@ ui <- fluidPage(
       numericInput( "sampleSize", "Sample Size (in grams):", value = 625, min = 1 )
     ),
     br(),
-    # uiOutput("saveButton"),
-    actionButton("saveBtn", "Save Table"),
-    downloadButton("dwnldTableBtn", "Download Table"),
-    br(),
     actionButton("runModelBtn", "Run Modeling"),),
   
   mainPanel(
@@ -102,6 +98,9 @@ ui <- fluidPage(
                ),
                br(),
                verbatimTextOutput("sumOutput"),
+               br(),
+               actionButton("saveBtn", "Save Table"),
+               downloadButton("dwnldTableBtn", "Download Table"),
                br(),
                
                radioButtons(
