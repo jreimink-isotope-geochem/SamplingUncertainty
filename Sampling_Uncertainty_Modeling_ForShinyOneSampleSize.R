@@ -347,7 +347,11 @@ raw.sd.plot <- ggplot(df_long, aes(x = percent)) +
 raw.sd.plot
 
 
+
+
 wr.summary.table <- wr.summary.table[, c(full.plot.order)]
+wr.summary.table <- data.frame( mass = c( rep( sample.mass, times = nrow(wr.summary.table))),
+                                wr.summary.table )
 
 
 
