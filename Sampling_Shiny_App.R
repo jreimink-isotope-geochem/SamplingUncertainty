@@ -35,7 +35,7 @@ ui <- fluidPage(
     conditionalPanel(
       condition = "input.calc_type == 'Single'",
       numericInput( "sampleSize", "Sample Size (in grams):", value = 625, min = 1 ),
-      actionButton( "saveSzBtn", "Save Size")
+      # actionButton( "saveSzBtn", "Save Size")
     ),
     br(),
     actionButton("runModelBtn", "Run Modeling"),),
@@ -100,7 +100,7 @@ ui <- fluidPage(
                br(),
                verbatimTextOutput("sumOutput"),
                br(),
-               actionButton( "saveBtn", "Save Table"),
+               # actionButton( "saveBtn", "Save Table"),
                downloadButton("dwnldTableBtn", "Download Table"),
                br(),
                
@@ -277,47 +277,35 @@ server <- function(input, output, session) {
     }
     )
 
-  #save table button
-  observeEvent(input$saveBtn, {
-    if( input$input_type == "Upload" ) {
-      newData <- hot_to_r(input$MineralParameters)
-    }
-    else {
-      newData <- hot_to_r(input$MineralParameters)
-    }
-    sample.size.data <- data.frame( sample.size = input$sampleSize )
-    # Replace "path/to/file.csv" with the actual path to your CSV file
-    write.csv(newData, "Shiny_OutPut.csv", row.names = FALSE)
-    write.csv(newData, paste(input$sampleName,"_min_parameters.csv", sep=""), row.names = FALSE)
-    write.csv(sample.size.data, "sample_size.csv", row.names = FALSE)
-    write.csv(selectedOxides(), "oxideschosen.csv", row.names = FALSE)
-    write.csv(selectedTraces(), "traceschosen.csv", row.names = FALSE)
-    showModal(modalDialog(
-      "Changes saved successfully!",
-      title = "Success"
-    ))
-  })
+  # #save table button
+  # observeEvent(input$saveBtn, {
+  #   if( input$input_type == "Upload" ) {
+  #     newData <- hot_to_r(input$MineralParameters)
+  #   }
+  #   else {
+  #     newData <- hot_to_r(input$MineralParameters)
+  #   }
+  #   sample.size.data <- data.frame( sample.size = input$sampleSize )
+  #   # Replace "path/to/file.csv" with the actual path to your CSV file
+  #   write.csv(newData, "Shiny_OutPut.csv", row.names = FALSE)
+  #   write.csv(newData, paste(input$sampleName,"_min_parameters.csv", sep=""), row.names = FALSE)
+  #   write.csv(sample.size.data, "sample_size.csv", row.names = FALSE)
+  #   write.csv(selectedOxides(), "oxideschosen.csv", row.names = FALSE)
+  #   write.csv(selectedTraces(), "traceschosen.csv", row.names = FALSE)
+  #   showModal(modalDialog(
+  #     "Changes saved successfully!",
+  #     title = "Success"
+  #   ))
+  # })
   
-  ## save Size Button 
-  observeEvent(input$saveSzBtn, {
-    if( input$input_type == "Upload" ) {
-      newData <- hot_to_r(input$MineralParameters)
-    }
-    else {
-      newData <- hot_to_r(input$MineralParameters)
-    }
-    sample.size.data <- data.frame( sample.size = input$sampleSize )
-    # Replace "path/to/file.csv" with the actual path to your CSV file
-    write.csv(newData, "Shiny_OutPut.csv", row.names = FALSE)
-    write.csv(newData, paste(input$sampleName,"_min_parameters.csv", sep=""), row.names = FALSE)
-    write.csv(sample.size.data, "sample_size.csv", row.names = FALSE)
-    write.csv(selectedOxides(), "oxideschosen.csv", row.names = FALSE)
-    write.csv(selectedTraces(), "traceschosen.csv", row.names = FALSE)
-    showModal(modalDialog(
-      "Changes saved successfully!",
-      title = "Success"
-    ))
-  })
+  # ## save Size Button 
+  # observeEvent(input$saveSzBtn, {
+  #   sample.size.data <- data.frame( sample.size = input$sampleSize )
+  #   showModal(modalDialog(
+  #     "Sample Size saved successfully!",
+  #     title = "Success"
+  #   ))
+  # })
   
   # Update the data when the table is edited
   observeEvent(input$MineralParameters$changes$changes, {
@@ -380,6 +368,23 @@ server <- function(input, output, session) {
         easyClose = TRUE
       )
     )
+    
+    if( input$input_type == "Upload" ) {
+      newData <- hot_to_r(input$MineralParameters)
+    }
+    else {
+      newData <- hot_to_r(input$MineralParameters)
+    }
+    sample.size.data <- data.frame( sample.size = input$sampleSize )
+    # Replace "path/to/file.csv" with the actual path to your CSV file
+    write.csv(newData, "Shiny_OutPut.csv", row.names = FALSE)
+    write.csv(newData, paste(input$sampleName,"_min_parameters.csv", sep=""), row.names = FALSE)
+    
+    sample.size.data <- data.frame( sample.size = input$sampleSize )
+    write.csv(sample.size.data, "sample_size.csv", row.names = FALSE)
+    write.csv(selectedOxides(), "oxideschosen.csv", row.names = FALSE)
+    write.csv(selectedTraces(), "traceschosen.csv", row.names = FALSE)
+    
 
     # Set data1 as an environment variable for the sourced script
     env <- new.env()
