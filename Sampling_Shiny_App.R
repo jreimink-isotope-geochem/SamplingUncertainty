@@ -11,18 +11,36 @@ library(tidyr)
 # Define UI
 ui <- fluidPage(
   # theme = bslib::bs_theme(bootswatch = "united"),
-  h1( id="big-heading", "Geochemical Uncertainty in Geological Sampling"),
+  h1( id="big-heading", "SAMPLERR: A Program for Estimating Sampling Error in Whole-Rock Analyses"),
 
 
   sidebarPanel(
     tags$div(
       style = "background-color: #f2f2f2;",
       p(style = "text-align: left;", 
-        HTML("This app was written by Jesse Reimink and Tom Chacko 
-        and is largely based on the sampling error algorithms of 
-        Stanley (2003) but also incorporates the effects of closure on 
-        uncertainty estimates associated with whole-rock compositions
-             ")),
+        HTML("SAMPLERR, which is short for ‘sampling error’, is a program that calculates 
+        the effect of sample size on the precision of a whole-rock geochemical analysis. 
+        To put it another way, the program investigates the relationship between sample 
+        size and sampling error. 
+        <br>
+        <br>
+        The sampling error associated with a whole-rock analysis 
+        is a function of the modal abundances of the rock’s constituent minerals, the grain 
+        sizes of those minerals and the size (mass) of the sample collected to be representative 
+        of the rock body being investigated. In general, the coarser the grain size of a rock, 
+        the larger the sample that is required to achieve a certain level of precision in the analysis.<br>
+        <br>
+        
+        The rationale for the program is described in detail in Reimink and Chacko (2024) but the 
+        interested user is encouraged to also look at earlier papers by <a hfef=https://doi.org/10.1080/00167616708728644> 
+        Kleeman (1967)</a> and, in 
+        particular, <a href=https://doi.org/10.1144/1467-7873/03-008>Stanley (2003)</a>, as the present program is 
+        largely based on the sampling error 
+        algorithms developed in the latter study.
+             <br>
+             <br>
+             When using please cite: Reimink, J.R. and Chacko, T. (2024) Geological sampling.  
+             In: Treatise on Geochemistry (3rd edition), in press" )),
     ),
     tags$hr(style = "border: 1px solid black; margin-top: 10px;"),      
     radioButtons(
@@ -74,7 +92,9 @@ ui <- fluidPage(
                        10,000 simulations of the input rock modal composition. The table 
                        also reports, for a given sample mass and mineral grain sizes, 
                        the predicted sampling error standard deviation and relative 
-                       standard deviation (RSD) for each oxide or element.</li>" ) ) ) ),
+                       standard deviation (RSD) for each oxide or element.</li>" ) ) ),
+                br(),
+                p( HTML( "<a href = https://github.com/jreimink-isotope-geochem/SamplingUncertainty/blob/main/SAMPLERR%20Read_Me.pdf> Download ReadME file </a>" ) ) ),
       # Tab 2: Input table - 
       tabPanel("Input Data", 
                textInput( "sampleName", "Sample Name:", value = "sample name here" ),
@@ -358,6 +378,8 @@ server <- function(input, output, session) {
       write.csv( hot_to_r(input$MineralParameters), file, row.names = FALSE )
     }
   )
+  
+
   
   
   # Run the reduction with an if statement depending on whether it is pertaining to many sample sizes or

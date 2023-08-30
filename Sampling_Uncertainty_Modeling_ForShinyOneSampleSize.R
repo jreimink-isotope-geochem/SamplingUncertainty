@@ -313,7 +313,7 @@ wr.comp.model.comb.summarize <- cbind( col.var = rep( 1, times = nrow( wr.comp.m
 
 summary_stats <- wr.comp.model.comb.summarize %>%
   summarise(across(everything(), list(mean = mean, sd = sd))) %>%
-  pivot_longer(cols = -1, names_to = c("oxide", ".value"), names_sep = "_")
+  tidyr::pivot_longer(cols = -1, names_to = c("oxide", ".value"), names_sep = "_")
 summary_stats <- summary_stats[-1,]
 
 summary_stats_plotting <- summary_stats %>%
