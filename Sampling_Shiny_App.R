@@ -105,7 +105,9 @@ ui <- fluidPage(
                  choices = c("SiO2", "TiO2", "Al2O3", "Fe2O3", "FeO", "FeOt", "MnO", "MgO", "CaO",
                              "Na2O", "K2O", "P2O5", "H2O", "CO2", "Li2O", "ThO2", "BaO", "ZrO2", 
                              "La2O3", "Ce2O3", "Pr2O3", "Nd2O3", "Sm2O3", "Eu2O3", "Gd2O3", "Tb2O3",
-                             "Dy2O3", "Ho2O3", "Er2O3", "Tm2O3", "Yb2O3", "Lu2O3", "Y2O3" ),
+                             "Dy2O3", "Ho2O3", "Er2O3", "Tm2O3", "Yb2O3", "Lu2O3", "Y2O3", 
+                             "Sb2O3",	"CuO",	"Au2O",	"Ag2O",	"As2O3",	"SnO2",	"Sc2O3",	"UO2",
+                             "V2O5",	"WO3",	"ZnO",	"SrO",	"BeO",	"PbO",	"Rb2O",	"Cs2O",	"Nb2O5",	"B2O3" ),
                  selected = c("SiO2", "TiO2", "Al2O3", "FeOt", "MnO", "MgO", "CaO",
                               "Na2O", "K2O", "P2O5" ),
                  multiple = TRUE
@@ -114,7 +116,8 @@ ui <- fluidPage(
                  inputId = "inputTraces",
                  label = "Select and Order Trace Elements",
                  choices = c("Zr", "Th", "Ba", "Li", "La", "Ce", "Pr", "Nd", "Sm", "Eu", "Gd", 
-                             "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Y" ),
+                             "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Y", "Sb", "Cu", "Au", "Ag",
+                             "As", "Sn", "Sc", "U", "V", "W", "Zn", "Sr", "Be", "Pb", "Rb", "Cs", "Nb", "B"),
                  selected = c( "Zr", "Th", "Ba" ),
                  multiple = TRUE
                ),
@@ -214,9 +217,6 @@ server <- function(input, output, session) {
     input$inputTraces
   })
   
-  
-  
-  
   uploadedData <- reactive({
     req(input$fileInput)
     inFile <- input$fileInput
@@ -228,39 +228,6 @@ server <- function(input, output, session) {
   })
   
 
-  
-  
-  # output$MineralParameters <- renderRHandsontable({
-  #   if (input$dataOption = "Edit") {
-  #     rhandsontable(min_parameters(), rowHeaders = NULL, width = "100%") %>%
-  #       hot_col(col = "Distribution", type = "dropdown", source = c("h", "b", "p")) %>%
-  #       hot_cols(list(editable = TRUE)) %>%
-  #       hot_col("Modes", renderer = "
-  #       function(instance, td, row, col, prop, value, cellProperties) {
-  #         Handsontable.renderers.TextRenderer.apply(this, arguments);
-  #         if (parseFloat(value) !== 0) {
-  #           $(td).css('background-color', 'lightyellow');
-  #         }
-  #       }
-  #     ")
-  #   } else {
-  #     if (!is.null(input$fileInput ) ) {
-  #       inFile <- input$fileInput
-  #       data <- read.csv(inFile$datapath, stringsAsFactors = FALSE)
-  #       rhandsontable(data, rowHeaders = NULL, width = "100%") %>%
-  #         hot_col(col = "Distribution", type = "dropdown", source = c("h", "b", "p")) %>%
-  #         hot_cols(list(editable = TRUE)) %>%
-  #         hot_col("Modes", renderer = "
-  #         function(instance, td, row, col, prop, value, cellProperties) {
-  #           Handsontable.renderers.TextRenderer.apply(this, arguments);
-  #           if (parseFloat(value) !== 0) {
-  #             $(td).css('background-color', 'lightyellow');
-  #           }
-  #         }
-  #       ")
-  #     }
-  #   }
-  # })
   observe( 
     if( input$input_type == "Upload" ) {
       output$MineralParameters <- renderRHandsontable({
@@ -298,35 +265,6 @@ server <- function(input, output, session) {
     }
     )
 
-  # #save table button
-  # observeEvent(input$saveBtn, {
-  #   if( input$input_type == "Upload" ) {
-  #     newData <- hot_to_r(input$MineralParameters)
-  #   }
-  #   else {
-  #     newData <- hot_to_r(input$MineralParameters)
-  #   }
-  #   sample.size.data <- data.frame( sample.size = input$sampleSize )
-  #   # Replace "path/to/file.csv" with the actual path to your CSV file
-  #   write.csv(newData, "Shiny_OutPut.csv", row.names = FALSE)
-  #   write.csv(newData, paste(input$sampleName,"_min_parameters.csv", sep=""), row.names = FALSE)
-  #   write.csv(sample.size.data, "sample_size.csv", row.names = FALSE)
-  #   write.csv(selectedOxides(), "oxideschosen.csv", row.names = FALSE)
-  #   write.csv(selectedTraces(), "traceschosen.csv", row.names = FALSE)
-  #   showModal(modalDialog(
-  #     "Changes saved successfully!",
-  #     title = "Success"
-  #   ))
-  # })
-  
-  # ## save Size Button 
-  # observeEvent(input$saveSzBtn, {
-  #   sample.size.data <- data.frame( sample.size = input$sampleSize )
-  #   showModal(modalDialog(
-  #     "Sample Size saved successfully!",
-  #     title = "Success"
-  #   ))
-  # })
   
   # Update the data when the table is edited
   observeEvent(input$MineralParameters$changes$changes, {

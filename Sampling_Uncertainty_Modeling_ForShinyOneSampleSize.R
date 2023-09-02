@@ -151,7 +151,7 @@ minerals.comp.model <- list( SiO2 = sweep( mineral.model.normalized, 2, unlist( 
                              P2O5 = sweep( mineral.model.normalized, 2, unlist( min.comps["P2O5", ] ), `*` ),
                              ZrO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["ZrO2", ] ), `*` ),
                              CO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["CO2", ] ), `*` ),
-                             SO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["SO2", ] ), `*` ),
+                             SO3 = sweep( mineral.model.normalized, 2, unlist( min.comps["SO3", ] ), `*` ),
                              Li2O = sweep( mineral.model.normalized, 2, unlist( min.comps["Li2O", ] ), `*` ),
                              ThO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["ThO2", ] ), `*` ),
                              BaO = sweep( mineral.model.normalized, 2, unlist( min.comps["BaO", ] ), `*` ),
@@ -169,8 +169,27 @@ minerals.comp.model <- list( SiO2 = sweep( mineral.model.normalized, 2, unlist( 
                              Tm2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Tm2O3", ] ), `*` ),
                              Yb2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Yb2O3", ] ), `*` ),
                              Lu2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Lu2O3", ] ), `*` ),
-                             Y2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Y2O3", ] ), `*` )
+                             Y2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Y2O3", ] ), `*` ),
+                             Sb2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Sb2O3", ] ), `*` ),
+                             CuO = sweep( mineral.model.normalized, 2, unlist( min.comps["CuO", ] ), `*` ),
+                             Au2O = sweep( mineral.model.normalized, 2, unlist( min.comps["Au2O", ] ), `*` ),
+                             Ag2O = sweep( mineral.model.normalized, 2, unlist( min.comps["Ag2O", ] ), `*` ),
+                             As2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["As2O3", ] ), `*` ),
+                             SnO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["SnO2", ] ), `*` ),
+                             Sc2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["Sc2O3", ] ), `*` ),
+                             UO2 = sweep( mineral.model.normalized, 2, unlist( min.comps["UO2", ] ), `*` ),
+                             V2O5 = sweep( mineral.model.normalized, 2, unlist( min.comps["V2O5", ] ), `*` ),
+                             WO3 = sweep( mineral.model.normalized, 2, unlist( min.comps["WO3", ] ), `*` ),
+                             ZnO = sweep( mineral.model.normalized, 2, unlist( min.comps["ZnO", ] ), `*` ),
+                             SrO = sweep( mineral.model.normalized, 2, unlist( min.comps["SrO", ] ), `*` ),
+                             BeO = sweep( mineral.model.normalized, 2, unlist( min.comps["BeO", ] ), `*` ),
+                             PbO = sweep( mineral.model.normalized, 2, unlist( min.comps["PbO", ] ), `*` ),
+                             Rb2O = sweep( mineral.model.normalized, 2, unlist( min.comps["Rb2O", ] ), `*` ),
+                             Cs2O = sweep( mineral.model.normalized, 2, unlist( min.comps["Cs2O", ] ), `*` ),
+                             Nb2O5 = sweep( mineral.model.normalized, 2, unlist( min.comps["Nb2O5", ] ), `*` ),
+                             B2O3 = sweep( mineral.model.normalized, 2, unlist( min.comps["B2O3", ] ), `*` )
 )
+
 
 minerals.comp.model$Th <- minerals.comp.model$ThO2 * 0.878809 * 10000
 minerals.comp.model$Zr <- minerals.comp.model$ZrO2 * 0.740318 * 10000
@@ -191,7 +210,26 @@ minerals.comp.model$Tm <- minerals.comp.model$Tm2O3 * (1/1.1421) * 10000
 minerals.comp.model$Yb <- minerals.comp.model$Yb2O3 * (1/1.1387) * 10000
 minerals.comp.model$Lu <- minerals.comp.model$Lu2O3 * (1/1.1371) * 10000
 minerals.comp.model$Y <- minerals.comp.model$Y2O3 * (1/1.2699) * 10000
+minerals.comp.model$Sb <- minerals.comp.model$Sb2O3 * (1/1.3284) * 10000
+minerals.comp.model$Cu <- minerals.comp.model$CuO * (1/1.2518) * 10000
+minerals.comp.model$Au <- minerals.comp.model$Au2O * (1/1.0406) * 10000
+minerals.comp.model$Ag <- minerals.comp.model$Ag2O * (1/1.0741) * 10000
+minerals.comp.model$As <- minerals.comp.model$As2O3 * (1/1.3203) * 10000
+minerals.comp.model$Sn <- minerals.comp.model$SnO2 * (1/1.2696) * 10000
+minerals.comp.model$Sc <- minerals.comp.model$Sc2O3 * (1/1.5338) * 10000
+minerals.comp.model$U <- minerals.comp.model$UO2 * (1/1.1344) * 10000
+minerals.comp.model$V <- minerals.comp.model$V2O5 * (1/1.7852) * 10000
+minerals.comp.model$W <- minerals.comp.model$WO3 * (1/1.2610) * 10000
+minerals.comp.model$Zn <- minerals.comp.model$ZnO * (1/1.2448) * 10000
+minerals.comp.model$Sr <- minerals.comp.model$SrO * (1/1.1826) * 10000
+minerals.comp.model$Be <- minerals.comp.model$BeO * (1/2.7758) * 10000
+minerals.comp.model$Pb <- minerals.comp.model$PbO * (1/1.0772) * 10000
+minerals.comp.model$Rb <- minerals.comp.model$Rb2O * (1/1.0936) * 10000
+minerals.comp.model$Cs <- minerals.comp.model$Cs2O * (1/1.0602) * 10000
+minerals.comp.model$Nb <- minerals.comp.model$Nb2O5 * (1/1.4305) * 10000
+minerals.comp.model$B <- minerals.comp.model$B2O3 * (1/3.2202) * 10000
 minerals.comp.model$FeOt <- ( minerals.comp.model$Fe2O3 * 0.89981 ) + minerals.comp.model$FeO 
+
 # sum the rows in each list to get rock oxide compositions
 wr.comp.model <- lapply( minerals.comp.model, rowSums, na.rm = T )
 # unlist them into a dataframe
