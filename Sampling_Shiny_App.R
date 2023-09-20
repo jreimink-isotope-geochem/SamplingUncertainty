@@ -85,7 +85,8 @@ ui <- fluidPage(
       Size</i> allows you to input the particular sample size (mass) that you want modeled.
       <li>It is recommended that you download the final input table for your records before running 
       the program. This can be done with the <b>Download Table</b> button under the <i>Input Data</i> tab. </li>
-      <li>Press <b>Run Modeling</b> (left panel) and wait for program to finish.</li>
+      <li>Press <b>Run Modeling</b> (left panel) and wait for program to finish. Note that it may take ~ 60 seconds 
+      for the program to complete its calculations.</li>
       <li>View and download output table and plots using the output tabs above. <i>Results Table</i> gives the 
       average major-, 
                        minor- and selected trace-element composition derived from the 
@@ -252,7 +253,8 @@ server <- function(input, output, session) {
           # hot_cols( colwidths = c( "100px", "300px", "100px") ) %>%
           # hot_cols( ) %>%
           hot_col(col = "Distribution", type = "dropdown", source = c("h", "b", "p")) %>%
-          hot_cols(list(editable = TRUE), fixedColumnsLeft = 1, columnSorting = T, manualColumnResize = T ) %>%
+          hot_cols(list(editable = TRUE), fixedColumnsLeft = 1, columnSorting = T, 
+                   manualColumnResize = T ) %>%
           hot_col("Modes", renderer = "
         function(instance, td, row, col, prop, value, cellProperties) {
           Handsontable.renderers.TextRenderer.apply(this, arguments);
@@ -260,7 +262,7 @@ server <- function(input, output, session) {
             $(td).css('background-color', 'lightyellow');
           }
         }
-      ")
+      ") 
       })
     }
     )
@@ -278,46 +280,20 @@ server <- function(input, output, session) {
       arrange( desc( Modes ) )
     min_parameters(sorted_data)
   })
-  
-  # Render the Save Table button
-  output$saveButton <- renderUI({
-    color <- if (values$tableChanged) "green" else "red"
-    actionButton("saveBtn", "Save Table", style = sprintf("color: white; background-color: %s;", color))
-  })
+
  
-  
   ## Sum up the mode data and display
   sumModes <- reactive({
     input$MineralParameters %>%
       hot_to_r() %>%
-      dplyr::select(Modes) %>%
-      summarise("Total Mode" = sum(Modes))
+      dplyr::select( Modes ) %>%
+      summarise( "Total Modes" = sum( Modes ) )
   })
 
   # Display the sum of the Modes column
   output$sumOutput <- renderPrint({
     sumModes()
   })
-  
-  # do stuff with the sample size value
-  observeEvent(input$sampleSize, {
-    sampleSize <- input$sampleSize
-    # Do something with the sampleSize value
-    # ...
-  })
-  
-  ## download input data tables when button pushed
-  output$dwnldTableBtn <- downloadHandler(
-    newData <- hot_to_r(input$MineralParameters),
-    filename = function() {
-      paste(input$sampleName,"Input_Data_", Sys.Date(), ".csv", sep = "")
-    },
-    content = function(file) {
-      write.csv( hot_to_r(input$MineralParameters), file, row.names = FALSE )
-    }
-  )
-  
-
   
   
   # Run the reduction with an if statement depending on whether it is pertaining to many sample sizes or

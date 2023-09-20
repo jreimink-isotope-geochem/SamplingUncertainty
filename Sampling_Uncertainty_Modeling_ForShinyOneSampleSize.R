@@ -1,10 +1,6 @@
 
 ## Single Sample Size
 
-# rm( list = ls( ) )
-
-
-
 fte_theme_white <- function() {
   library( RColorBrewer )
   # Generate the colors for the chart procedurally with RColorBrewer
@@ -31,8 +27,17 @@ fte_theme_white <- function() {
 }
 
 
-shiny.min.parameters <- read.csv( "Shiny_OutPut.csv", stringsAsFactors = FALSE)
-sample.mass.g <- read.csv("sample_size.csv", stringsAsFactors = FALSE)
+shiny.min.parameters.raw <- read.csv( "Shiny_OutPut.csv", stringsAsFactors = FALSE)
+sample.mass.g <- read.csv( "sample_size.csv", stringsAsFactors = FALSE)
+
+shiny.min.parameters <- subset( shiny.min.parameters.raw, Modes > 0 )
+
+
+shiny.min.parameters %>%
+  dplyr::select( Modes ) %>%
+  summarise("Total Modes" = sum(Modes))
+
+
 
 #############################  DATA IMPORT #############################
 # Import the modes, densities, and molar masses
@@ -86,6 +91,7 @@ rsd.err.num.min.grains.p <- err.num.min.grains.p / num.min.grains * 100
 nreps = 10000
 grain.num.model <- data.frame( matrix( nrow = nreps, ncol = ncol( num.min.grains ) ) )
 colnames( grain.num.model ) <- colnames( num.min.grains )
+
 
 
 
@@ -253,7 +259,7 @@ wr.summary.table <- data.frame( means = apply( wr.comp.model.comb, 2, mean ),
 
 wr.summary.table$rsd <- wr.summary.table$stdev / wr.summary.table$means * 100
 
-wr.summary.table <- data.frame(lapply(wr.summary.table, function(x) round(x, digits = 4)))
+wr.summary.table <- data.frame(lapply(wr.summary.table, function(x) round(x, digits = 5)))
 wr.summary.table <- t( wr.summary.table )
 colnames(wr.summary.table) <- colnames(wr.comp.model.comb)
 
