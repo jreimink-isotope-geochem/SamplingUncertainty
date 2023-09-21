@@ -60,7 +60,7 @@ ui <- fluidPage(
     actionButton("runModelBtn", "Run Modeling"),),
   
   mainPanel(
-    tabsetPanel(
+    tabsetPanel( selected = "Input Data",
       # Tab 1: Input table -       
       tabPanel( "Instructions", 
                 tags$div(
