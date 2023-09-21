@@ -142,7 +142,7 @@ ui <- fluidPage(
                  fileInput("fileInput", "Upload CSV File"),
                  dataTableOutput( "tableOutput")
                ),
-               p("Dimensions in cm, densities in kg/cm3"),
+               p("Dimensions in cm, densities in g/cm3"),
                rHandsontableOutput("MineralParameters") ),
       
       # Tab 2: Output table - 
