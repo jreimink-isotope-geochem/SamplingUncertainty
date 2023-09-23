@@ -382,6 +382,19 @@ server <- function(input, output, session) {
         )
       )
     })
+    
+
+    
+    ## download input data
+    output$dwnldTableBtn <- downloadHandler(
+      
+      filename = function() {
+        paste(input$sampleName,"Input_Data_", Sys.Date(), ".csv", sep = "")
+      },
+      content = function(file) {
+        write.csv( hot_to_r(input$MineralParameters), file, row.names = FALSE )
+      }
+    )
 
     
     
