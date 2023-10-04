@@ -254,8 +254,10 @@ grain.mass.summary$rsd <- grain.mass.summary$stdev / grain.mass.summary$means * 
 # grain.mass.summary
 ## summarize the wr.results
 wr.summary.table <- data.frame( means = apply( wr.comp.model.comb, 2, mean ),
+                                stdev = apply( wr.comp.model.comb, 2, sd ),
                                 medians = apply( wr.comp.model.comb, 2, median ),
-                                stdev = apply( wr.comp.model.comb, 2, sd ) )
+                                perc.97.5 = apply( wr.comp.model.comb, 2, quantile, probs = c(0.975) ),
+                                perc.2.5 = apply( wr.comp.model.comb, 2, quantile, probs = c(0.025) ))
 
 wr.summary.table$rsd <- wr.summary.table$stdev / wr.summary.table$means * 100
 
@@ -398,4 +400,35 @@ wr.summary.table <- data.frame( mass = c( rep( sample.mass, times = nrow(wr.summ
                                 wr.summary.table )
 
 
+# 
+# ggplot( wr.comp.model.comb, aes( x = K2O ) ) +
+#   geom_histogram( binwidth = 0.1) +
+#   geom_histogram( data = subset(wr.comp.model.comb, K2O > quantile(wr.comp.model.comb$K2O, c(0.975)) ), fill = "red", binwidth = 0.1 ) +
+#   geom_histogram( data = subset(wr.comp.model.comb, K2O < quantile(wr.comp.model.comb$K2O, c(0.025)) ), fill = "red", binwidth = 0.1 ) +
+#   geom_histogram( data = subset(wr.comp.model.comb, K2O > quantile(wr.comp.model.comb$K2O, c(0.99)) ), fill = "orange", binwidth = 0.1 ) +
+#   geom_histogram( data = subset(wr.comp.model.comb, K2O < quantile(wr.comp.model.comb$K2O, c(0.01)) ), fill = "orange", binwidth = 0.1 ) +
+#   geom_vline( aes( xintercept = mean( wr.comp.model.comb$K2O)), color = "#3A8997", linetype = "dashed", size = 1) +
+#   geom_vline( aes(xintercept = mean( wr.comp.model.comb$K2O) - 2 * sd( wr.comp.model.comb$K2O) ), color = "#8f7767", linetype = "dotted", size = 1) +
+#   geom_vline( aes(xintercept = mean( wr.comp.model.comb$K2O) + 2 * sd( wr.comp.model.comb$K2O) ), color = "#8f7767", linetype = "dotted", size = 1) +
+#   geom_vline( aes(xintercept = geomean( wr.comp.model.comb$K2O)), color = "red", linetype = "dashed", size = 1) +
+#   geom_vline( aes(xintercept = median( wr.comp.model.comb$K2O)), color = "purple", linetype = "dashed", size = 1) +
+#   geom_vline( aes(xintercept = quantile(wr.comp.model.comb$K2O, c(0.975))), color = "red", linetype = "dotted", size = 1) +
+#   geom_vline( aes(xintercept = quantile(wr.comp.model.comb$K2O, c(0.025))), color = "red", linetype = "dotted", size = 1) +
+#   geom_vline( aes(xintercept = quantile(wr.comp.model.comb$K2O, c(0.99))), color = "orange", linetype = "dotted", size = 1) +
+#   geom_vline( aes(xintercept = quantile(wr.comp.model.comb$K2O, c(0.01))), color = "orange", linetype = "dotted", size = 1)
+# 
+# 
+# mean( wr.comp.model.comb$K2O)
+# mean( wr.comp.model.comb$K2O) - 2 * sd( wr.comp.model.comb$K2O)
+# mean( wr.comp.model.comb$K2O) + 2 * sd( wr.comp.model.comb$K2O)
+# geomean( wr.comp.model.comb$K2O)
+# quantile(wr.comp.model.comb$K2O, c(0.025))
+# quantile(wr.comp.model.comb$K2O, c(0.975))
+# quantile(wr.comp.model.comb$K2O, c(0.01))
+# quantile(wr.comp.model.comb$K2O, c(0.99))
+# 
+# geomean( wr.comp.model.comb$K2O) - quantile(wr.comp.model.comb$K2O, c(0.025))
+# quantile(wr.comp.model.comb$K2O, c(0.975)) - geomean( wr.comp.model.comb$K2O)
 
+
+  
