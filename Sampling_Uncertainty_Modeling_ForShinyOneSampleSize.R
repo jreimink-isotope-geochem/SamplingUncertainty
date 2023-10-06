@@ -361,8 +361,14 @@ wr.comp.model.comb.summarize <- cbind( col.var = rep( 1, times = nrow( wr.comp.m
   wr.comp.model.comb )
 
 summary_stats <- wr.comp.model.comb.summarize %>%
-  summarise(across(everything(), list(mean = mean, sd = sd))) %>%
-  tidyr::pivot_longer(cols = -1, names_to = c("oxide", ".value"), names_sep = "_")
+  summarise(across(everything(), list(
+    mean = mean,
+    sd = sd,
+    median = median,
+    percentile.97.5 = ~quantile(., 0.975), 
+    percentile.2.5 = ~quantile(., 0.025)
+  ) ) ) %>%
+  tidyr::pivot_longer( cols = -1, names_to = c("oxide", ".value"), names_sep = "_")
 summary_stats <- summary_stats[-1,]
 
 summary_stats_plotting <- summary_stats %>%
@@ -387,9 +393,9 @@ raw.sd.plot <- ggplot(df_long, aes(x = percent)) +
          strip.text.x = element_text(
            size = 12, color = "white" ) ) +
   geom_histogram( color = "black", fill = "#645153", size = 0.1, bins = 30 ) +
-  geom_vline(data = summary_stats_plotting, aes( xintercept = mean), color = "#3A8997", linetype = "dashed", size = 1) +
-  geom_vline(data = summary_stats_plotting, aes(xintercept = mean + 2 * sd), color = "#8f7767", linetype = "dotted", size = 1) +
-  geom_vline(data = summary_stats_plotting, aes(xintercept = mean - 2 * sd), color = "#8f7767", linetype = "dotted", size = 1) +
+  geom_vline(data = summary_stats_plotting, aes( xintercept = median ), color = "#3A8997", linetype = "dashed", size = 1) +
+  geom_vline(data = summary_stats_plotting, aes( xintercept = percentile.97.5 ), color = "#8f7767", linetype = "dotted", size = 1) +
+  geom_vline(data = summary_stats_plotting, aes(xintercept = percentile.2.5 ), color = "#8f7767", linetype = "dotted", size = 1) +
   labs( y = "", x = "Wt% Oxide/ppm") +
   theme(aspect.ratio = 1) +
   facet_wrap(~ oxide, ncol = 4, scales = "free", )
