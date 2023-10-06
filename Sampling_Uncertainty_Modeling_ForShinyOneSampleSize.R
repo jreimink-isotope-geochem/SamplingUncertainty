@@ -254,12 +254,15 @@ grain.mass.summary$rsd <- grain.mass.summary$stdev / grain.mass.summary$means * 
 # grain.mass.summary
 ## summarize the wr.results
 wr.summary.table <- data.frame( means = apply( wr.comp.model.comb, 2, mean ),
-                                stdev = apply( wr.comp.model.comb, 2, sd ),
-                                medians = apply( wr.comp.model.comb, 2, median ),
-                                perc.97.5 = apply( wr.comp.model.comb, 2, quantile, probs = c(0.975) ),
-                                perc.2.5 = apply( wr.comp.model.comb, 2, quantile, probs = c(0.025) ))
+                                stdev = apply( wr.comp.model.comb, 2, sd ) )
+wr.summary.table$rsd <- wr.summary.table$stdev / wr.summary.table$means * 100                             
 
-wr.summary.table$rsd <- wr.summary.table$stdev / wr.summary.table$means * 100
+wr.summary.table$median = apply( wr.comp.model.comb, 2, median )
+
+wr.summary.table$Percentile_97.5 = apply( wr.comp.model.comb, 2, quantile, probs = c(0.975) )
+wr.summary.table$Percentile_2.5 = apply( wr.comp.model.comb, 2, quantile, probs = c(0.025) )
+
+
 
 wr.summary.table <- data.frame(lapply(wr.summary.table, function(x) round(x, digits = 5)))
 wr.summary.table <- t( wr.summary.table )
@@ -398,7 +401,8 @@ raw.sd.plot
 wr.summary.table <- wr.summary.table[, c(full.plot.order)]
 wr.summary.table <- data.frame( mass = c( rep( sample.mass, times = nrow(wr.summary.table))),
                                 wr.summary.table )
-
+wr.summary.table <- data.frame(lapply(wr.summary.table, function(x) round(x, digits = 3)))
+rownames( wr.summary.table ) <- c("Mean", "StDev", "RSD", "Median", "Percentile_97.5", "Percentile_2.5" )
 
 # 
 # ggplot( wr.comp.model.comb, aes( x = K2O ) ) +
