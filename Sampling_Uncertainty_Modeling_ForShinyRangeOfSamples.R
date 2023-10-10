@@ -293,7 +293,7 @@ summary.raw.sds <- data.frame( mass = sample.masses,
                                              t( wr.summary.table.10000.g$stdev ),
                                              t( wr.summary.table.20000.g$stdev ) ) )
 colnames(summary.raw.sds) <- c( "mass", rownames(wr.summary.table.625.g))
-summary.raw.sds <- data.frame(lapply(summary.raw.sds, function(x) round(x, digits = 5)))
+summary.raw.sds <- data.frame(lapply(summary.raw.sds, function(x) round(x, digits = 3)))
 write.csv( summary.raw.sds, "Run.sds.csv")
 
 summary.rsds <- data.frame( mass = sample.masses,
@@ -316,7 +316,7 @@ summary.means <- data.frame( mass = sample.masses,
                                             t( wr.summary.table.5000.g$means ),
                                             t( wr.summary.table.10000.g$means ),
                                             t( wr.summary.table.20000.g$means )) )
-summary.means <- data.frame(lapply(summary.means, function(x) round(x, digits = 5)))
+summary.means <- data.frame(lapply(summary.means, function(x) round(x, digits = 3)))
 
 colnames(summary.means) <- c( "mass", rownames(wr.summary.table.625.g))
 write.csv( summary.means, "Run.means.csv")
