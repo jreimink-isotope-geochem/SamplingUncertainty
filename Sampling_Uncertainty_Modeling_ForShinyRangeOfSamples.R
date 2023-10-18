@@ -303,7 +303,7 @@ summary.rsds <- data.frame( mass = sample.masses,
                                           t( wr.summary.table.5000.g$rsd ),
                                           t( wr.summary.table.10000.g$rsd ),
                                           t( wr.summary.table.20000.g$rsd )) )
-summary.rsds <- data.frame(lapply(summary.rsds, function(x) round(x, digits = 5)))
+summary.rsds <- data.frame(lapply(summary.rsds, function(x) round(x, digits = 3)))
 
 colnames(summary.rsds) <- c( "mass", rownames(wr.summary.table.625.g))
 write.csv( summary.rsds, "Run.rsds.csv")
